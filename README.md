@@ -1,1 +1,8 @@
-# tickets_on_blockchain_NTNU_bachelor_2019
+# Tickets on blockchain
+
+This is a prototype "proof of consept" ticket system based on the ethereum blockchain.
+
+
+#Instalation guide
+
+Comming soon

@@ -3,5 +3,5 @@
 This is a prototype "proof of consept" ticket system based on the ethereum blockchain.
 
 
-# Instalation guide
-Comming soon
+# Installation guide
+Check for Guide - installation.pdf for information how to install the software

@@ -9,7 +9,7 @@
   "scripts": {
     "test": "test"
   },
-  "author": "Andrine Celine Flatby, Marius Lillevik and Ole Bjørn Gran",
+  "author": "Andrine Celine Flatby, Marius Lillevik og Ole Bjørn Gran",
   "license": "ISC",
   "dependencies": {}
 }

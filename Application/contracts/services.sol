@@ -17,4 +17,8 @@ contract Services{
         TicketsKey++;
         } 
     }
+
+    function getTicket() public{
+        
+    }
 }

@@ -4,7 +4,8 @@ contract Services{
 
     struct ticket{
         uint ticket_id;
-        string owner;
+        uint game_id;
+        bool availbe;
     }
 
     /*
@@ -16,21 +17,26 @@ contract Services{
         string awayTeam;
         uint number_of_tickets;
     }
+
     game[] Games;
     ticket[] Tickets;
 
-    function createGame(uint _id, string memory _homeTeam, string memory _awayTeam, uint _tickets) public{
-        game memory g = game(_id, _homeTeam, _awayTeam, _tickets);
+    /*
+    TODO: create event for games and tickets
+     */
+
+    function createGame(uint _Gameid, string memory _homeTeam, string memory _awayTeam, uint _tickets ) public{
+        game memory g = game(_Gameid, _homeTeam, _awayTeam, _tickets);
+
+        for(uint i = 0; i <= g.number_of_tickets; i++){
+            ticket memory t = ticket(i, _Gameid, true);
+            Tickets.push(t);
+        }
         Games.push(g);
     }
 
-    function createTicket(uint _id, string memory _owner) public{
-        ticket memory t = ticket(_id, _owner);
-        Tickets.push(t);
-    }
-
-    function getTicket(uint _id) public view returns(uint, string memory){
+    function getTicket(uint _id) public view returns(uint, uint){
         ticket memory myTicket = Tickets[_id];
-        return(myTicket.ticket_id, myTicket.owner);
+        return(myTicket.ticket_id, myTicket.game_id);
     }
 }

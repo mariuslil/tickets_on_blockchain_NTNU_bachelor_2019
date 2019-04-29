@@ -1,4 +1,4 @@
-const Services = artifacts.require("./Services.sol");
+const Services = artifacts.require("./services.sol");
 
 module.exports = function (deployer) {
     deployer.deploy(Services);

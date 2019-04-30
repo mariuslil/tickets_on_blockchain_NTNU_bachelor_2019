@@ -18,9 +18,6 @@ contract Services{
         bool available;
     }
 
-    /*
-    TODO: make score in game
-    */
     struct game{
         //the id of game
         uint game_id;

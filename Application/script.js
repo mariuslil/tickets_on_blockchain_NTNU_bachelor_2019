@@ -3,7 +3,25 @@ module.exports = function (callback) {
     const contract = TruffleContract(require("../test/build/contracts/Services.json"));
     contract.setProvider(web3.currentProvider);
 
-    var e = contract.deployed().then(function (instance) { billet = instance; billet.createGame(0, "lag1", "lag2", 10, 100); billet.getTicket(0) });
-    console.log(e)
+    contract.deployed().then(function (instance) {
+        billet = instance;
+        var a = billet.createGame(0, "lag1", "lag2", 10, 100);
+        console.log("create game");
+        a.then(function (g) {
+            console.log(g);
+        });
+        var t = billet.getTicket(0);
+        console.log("getTicket");
+        t.then(function (v) {
+            console.log("value is ", v);
+        });
+
+        var t2 = billet.getTicket(10);
+        console.log("getTicket");
+        t2.then(function (v2) {
+            console.log("value is ", v2);
+        });
+    });
+    console.log("test");
     callback();
 }

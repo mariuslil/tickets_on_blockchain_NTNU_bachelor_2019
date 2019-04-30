@@ -2,9 +2,15 @@ pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
 -Created a event for game and tickets
--Make a score variable in struct game
+-Create variable in struct ticket for vailadate ticket
+-Make a score variable in struct game - May?
 -Create a function for get all the available (true) ticket
 -Create a struct for a owner of a ticket
+-Create function for buy ticket with owner
+-Create function for vailedate ticket
+-Create function create a Owners
+-Create struct season - may?
+-Create function create season - may?
 */
 
 contract Services{
@@ -43,7 +49,7 @@ contract Services{
         //which ticket the owner owns
         uint[] ticket_own;
     }
-    
+
     //all Owners
     owner[] Owners;
 

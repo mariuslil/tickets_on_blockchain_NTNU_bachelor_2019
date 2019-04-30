@@ -63,10 +63,23 @@ contract Services{
 
     event CreateTicket(uint _ticketId, uint _GameId, bool _available, int _price, bool _vaildate);
 
-    //Create a game in Game[] and then create the number of ticket in the game in Tickets[]
-    function createGame(uint _Gameid, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public{
-        game memory g = game(_Gameid, _homeTeam, _foreignTeam, _tickets);
+    event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile, uint[]  _ticketOwns);
 
+    function createOwner(uint _ownerId, string memory _name, address _addr, int _mobile, uint[] memory _ticketOwns) public returns(bool){
+        require(Owners[_ownerId].owner_id != _ownerId, "The owner id is already beging used");
+        require(Owners[_ownerId].addr != _addr, "The address is already begin used");
+        owner memory o = owner(_ownerId, _name, _addr, _mobile, _ticketOwns);
+        Owners.push(o);
+        emit CreateOwner(_ownerId, _name, _addr, _mobile, _ticketOwns);
+        return true;
+    }
+
+    //Create a game in Game[] and then create the number of ticket in the game in Tickets[]
+    //returns if function can push Game and ticket to memory
+    function createGame(uint _Gameid, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public returns(bool){
+        require(Games[_Gameid].game_id != _Gameid, "The game already exits");
+        game memory g = game(_Gameid, _homeTeam, _foreignTeam, _tickets);
+        
         //Create number of ticket with _tickets in Tickets[], also include the same _Gameid as Games[] belong to
         for(uint i = 0; i <= g.number_of_tickets; i++){
             ticket memory t = ticket(i, _Gameid, true, _price, false);
@@ -75,6 +88,7 @@ contract Services{
         }
         Games.push(g);
         emit CreateGame(_Gameid, _homeTeam, _foreignTeam, _tickets);
+        return true;
     }
 
     //Return ticket_id and game_id by ticket_id in Tickets[]

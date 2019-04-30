@@ -21,6 +21,8 @@ module.exports = function (callback) {
         t2.then(function (v2) {
             console.log("value is ", v2);
         });
+    }).catch(function (e) {
+        console.error(e);
     });
     console.log("test");
     callback();

@@ -18,9 +18,6 @@ contract Services{
         bool available;
     }
 
-    /*
-    TODO: make score in game
-    */
     struct game{
         //the id of game
         uint game_id;
@@ -29,6 +26,17 @@ contract Services{
         //the name of foreign team
         string foreignTeam;
         uint number_of_tickets;
+    }
+
+    struct owner{
+        //the name og onwer
+        string name;
+        //the addr of owner in ethereum
+        address addr;
+        //mobile number to owner
+        int mobile;
+        //which ticket the owner owns
+        uint[] ticket_own;
     }
 
     //all Games

@@ -1,15 +1,14 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
--Create variable in struct ticket for vailadate ticket
 -Make a score variable in struct game - May?
--Create a function for get all the available (true) ticket
 -Create a struct for a owner of a ticket
 -Create function for buy ticket with owner
 -Create function for vailedate ticket
 -Create function create a Owners
 -Create struct season - may?
 -Create function create season - may?
+-Create function get list over available Tickets
 */
 
 contract Services{
@@ -23,6 +22,8 @@ contract Services{
         bool available;
         //the price of the ticket, inn kr
         int price;
+        //vailedate if ticket is used or not
+        bool vaildate;
     }
 
     struct game{
@@ -60,7 +61,7 @@ contract Services{
 
     event CreateGame(uint _GameId, string _homeTeam, string _foreignTeam, uint _tickets);
 
-    event CreateTicket(uint _ticketId, uint _GameId, bool _available, int price);
+    event CreateTicket(uint _ticketId, uint _GameId, bool _available, int _price, bool _vaildate);
 
     //Create a game in Game[] and then create the number of ticket in the game in Tickets[]
     function createGame(uint _Gameid, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public{
@@ -68,9 +69,9 @@ contract Services{
 
         //Create number of ticket with _tickets in Tickets[], also include the same _Gameid as Games[] belong to
         for(uint i = 0; i <= g.number_of_tickets; i++){
-            ticket memory t = ticket(i, _Gameid, true, _price);
+            ticket memory t = ticket(i, _Gameid, true, _price, false);
             Tickets.push(t);
-            emit CreateTicket(i, _Gameid, true, _price);
+            emit CreateTicket(i, _Gameid, true, _price, false);
         }
         Games.push(g);
         emit CreateGame(_Gameid, _homeTeam, _foreignTeam, _tickets);

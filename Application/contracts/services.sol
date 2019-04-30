@@ -1,7 +1,6 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
--Created a event for game and tickets
 -Create variable in struct ticket for vailadate ticket
 -Make a score variable in struct game - May?
 -Create a function for get all the available (true) ticket
@@ -59,6 +58,10 @@ contract Services{
     //all Tickets
     ticket[] Tickets;
 
+    event CreateGame(uint _GameId, string _homeTeam, string _foreignTeam, uint _tickets);
+
+    event CreateTicket(uint _ticketId, uint _GameId, bool _available, int price);
+
     //Create a game in Game[] and then create the number of ticket in the game in Tickets[]
     function createGame(uint _Gameid, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public{
         game memory g = game(_Gameid, _homeTeam, _foreignTeam, _tickets);
@@ -67,8 +70,10 @@ contract Services{
         for(uint i = 0; i <= g.number_of_tickets; i++){
             ticket memory t = ticket(i, _Gameid, true, _price);
             Tickets.push(t);
+            emit CreateTicket(i, _Gameid, true, _price);
         }
         Games.push(g);
+        emit CreateGame(_Gameid, _homeTeam, _foreignTeam, _tickets);
     }
 
     //Return ticket_id and game_id by ticket_id in Tickets[]

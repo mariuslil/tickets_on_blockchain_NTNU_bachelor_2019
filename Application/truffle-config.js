@@ -47,6 +47,12 @@ module.exports = {
       network_id: "1100", // Match any network id
       from: "0x184724094558512dd50c8e938286f715ca6a0284",
       gas: 8280000
+    },
+    testnett: {
+      host: "127.0.0.1",
+      port: 7545,
+      network_id: "5777",
+      gas: 8280000
     }
   },
 

@@ -55,16 +55,16 @@ contract Services{
         return(myTicket.ticket_id, myTicket.game_id);
     }
 
-    //virker ikke
-    function getTicketAvailable(uint _Gameid, bool _available) public view returns(uint[] memory){
-        uint[] memory availableTickets;
+    //Return number of ticket available in a game
+    function getTicketAvailable(uint _Gameid) public view returns(int){
         game  memory g = Games[_Gameid];
+        int counter = 0;
         for(uint i = 0; i <= g.number_of_tickets; i++){
             ticket memory myTicket = Tickets[i];
-            if(myTicket.available == _available){
-                availableTickets[i] = myTicket.ticket_id;
+            if(myTicket.available == true && myTicket.game_id == g.game_id){
+                counter++;
             }
         }
-        return (availableTickets);
+        return (counter-1);
     }
 }

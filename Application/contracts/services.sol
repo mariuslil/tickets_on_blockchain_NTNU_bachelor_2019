@@ -18,6 +18,9 @@ contract Services{
         bool available;
     }
 
+    /*
+    TODO: make score in game
+    */
     struct game{
         //the id of game
         uint game_id;
@@ -50,5 +53,18 @@ contract Services{
     function getTicket(uint _id) public view returns(uint, uint){
         ticket memory myTicket = Tickets[_id];
         return(myTicket.ticket_id, myTicket.game_id);
+    }
+
+    //virker ikke
+    function getTicketAvailable(uint _Gameid, bool _available) public view returns(uint[] memory){
+        uint[] memory availableTickets;
+        game  memory g = Games[_Gameid];
+        for(uint i = 0; i <= g.number_of_tickets; i++){
+            ticket memory myTicket = Tickets[i];
+            if(myTicket.available == _available){
+                availableTickets[i] = myTicket.ticket_id;
+            }
+        }
+        return (availableTickets);
     }
 }

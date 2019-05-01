@@ -45,7 +45,7 @@ contract Services{
         //mobile number to owner
         int mobile;
         //which ticket the owner owns
-        uint[50] ticketOwns;
+        mapping(uint => ticket) tickets;
     }
 
     //enum which state the ticket is in
@@ -64,7 +64,7 @@ contract Services{
     event CreateTicket(uint _ticketId, uint _GameId, int _price, States state);
 
     //Create event for CreateOwner
-    event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile, uint[50] _ticketOwns);
+    event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile);
 
     //createOwner function goal is to create a owner in Onwers[]
     //@param uint _ownerId setting the id to owner
@@ -73,29 +73,45 @@ contract Services{
     //@param int _mobile setting mobile number to owner
     //@returns bool, return true if the function was successfull
     function createOwner(uint _ownerId, string memory _name, address _addr, int _mobile) public returns(bool){
-        //check if the id or address already begin used
-        //checkOwner(_ownerId, _addr);
 
-        uint[50] memory ticketsOwns;                                                //A owner can only max 50 tickets
+        owner memory o = owner(_ownerId, _name, _addr, _mobile);      //Create a temporary memory of struct owner
 
-        owner memory o = owner(_ownerId, _name, _addr, _mobile, ticketsOwns);      //Create a temporary memory of struct owner
-        Owners.push(o);
+        //call the function checkOwner to check _ownerId and _addr
+        if(checkOwner(_ownerId, _addr) == false){
+            return (false);
+        } else {
+            Owners.push(o);
 
-        emit CreateOwner(_ownerId, _name, _addr, _mobile, ticketsOwns);         //Emit an event on success
-        return(true);
+            emit CreateOwner(_ownerId, _name, _addr, _mobile);         //Emit an event on success
+        
+            return (true);
+        }
+
     }
 
     //checkOwner function is to make sure that id and address aren't begin used more then one time - not working
     //@param unit _ownerId is the id begin check
     //@param address _addr is the address begin check 
     //@returns string and bool, return true if not begin used, and false if are already used
-    function checkOwner(uint _ownerId, address _addr) internal view returns(string memory,bool){
-        for(uint i = 0; i <= Owners.length; i++){
-            if(Owners[i].owner_id == _ownerId && Owners[i].addr == _addr){
-                return ("the Id and address is already begin used",false);
+    function checkOwner(uint _ownerId, address _addr) public returns(bool){
+
+        //check if Owners[] holds something
+        if(Owners.length != 0){
+
+            //check every Owners[]
+            for(uint i = 0; i <= Owners.length; i++){
+
+                //if owner_id and _addr is the same
+                if(Owners[i].owner_id == _ownerId && Owners[i].addr == _addr){
+                    
+                    return (false);                                                 //return false, id and addr already begin used
+                }
             }
+            return (true);                                                          //return true, is not begin used
+
+        } else{
+            return (true);                                                          //return true, Owners dont hold anything
         }
-        return ("The owner id and address is available!", true);
     }
 
     //Create a game and tickets in Game[]
@@ -132,7 +148,9 @@ contract Services{
                     emit CreateTicket(i, _gameId, _price, States.available);            //Emit an event on success
                 }
                 return true;                                                           //return if is successfull
+
             } else {
+
                 return false;                                                        //return false is _gameId and _tickets dont match
             }
          }
@@ -163,8 +181,29 @@ contract Services{
         return (counter);               //return the number of ticket available
     }
 
-    function buyTicket(uint _gameId) public returns(bool){
-     
+    //buyTicket let a owner buy a ticket in game
+    //@param uint _ownerId is the id of the owner
+    //@param uint _gameId is the the id of game the owner want but ticket
+    //@return true if there are any ticket available, false if no ticket available
+    function buyTicket(uint _ownerId, uint _gameId) public returns(bool){
+
+        //check all ticket in a game
+        for(uint i = 0; i < Games[_gameId].number_of_tickets; i++){
+
+            //if are any ticket available
+            if(Games[_gameId].tickets[i].state == States.available){
+
+                Games[_gameId].tickets[i].state = States.bought;            //change the state to bought
+
+                Owners[_ownerId].tickets[i]= Games[_gameId].tickets[i];     //copy the ticket information to owner
+
+                return(true);                                               //return true if successfull
+            }
+        }
+        return (false);                                                     //return false if failed
+    }
+
+    function getTicketOwner(uint _ownerId) public view returns(uint){
     }
 
     function vaildateTicket(uint _ticketId) public returns(bool){

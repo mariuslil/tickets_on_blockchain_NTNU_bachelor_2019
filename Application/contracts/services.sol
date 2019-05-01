@@ -1,12 +1,13 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
--Make a score variable in struct game - May?
--Create function for buy ticket with owner
 -Create function for vailedate ticket
--Create struct season - may?
--Create function create season - may?
--Create function get list over available Tickets - may?
+
+Extra:
+-Create struct season
+-Create function create season 
+-Create function get list over available Tickets
+-Make a score variable in struct game 
 */
 
 contract Services{
@@ -93,7 +94,7 @@ contract Services{
     //@param unit _ownerId is the id begin check
     //@param address _addr is the address begin check 
     //@returns string and bool, return true if not begin used, and false if are already used
-    function checkOwner(uint _ownerId, address _addr) public returns(bool){
+    function checkOwner(uint _ownerId, address _addr) public view returns(bool){
 
         //check if Owners[] holds something
         if(Owners.length != 0){
@@ -120,16 +121,45 @@ contract Services{
     //@param string memory _foreignTeam is the name of the foreignteam
     //@param unit _ticket is the number of tickets in a game
     //@param int _price is the price of a ticket
-    //return true if function was successful
+    //@return true if function was successful
     function createGame(uint _gameId, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public returns(bool){
         game memory g = game(_gameId, _homeTeam, _foreignTeam, _tickets);       //Create a temporary memory of struct game
-        Games.push(g);
+        if(checkGame(_gameId) == false){
+            return (false);
+        } else{
+            Games.push(g);
        
-        emit CreateGame(_gameId, _homeTeam, _foreignTeam, _tickets);            //Emit an event on success 
+            emit CreateGame(_gameId, _homeTeam, _foreignTeam, _tickets);            //Emit an event on success 
 
-        createTicket(_gameId, _tickets, _price);                                //call the function createTicket for creating the                                                                               //tickets in a game
+            createTicket(_gameId, _tickets, _price);                                //call the function createTicket for creating the tickets in a game
 
-        return true;
+            return (true);
+        }
+    }
+    
+    //checkGame function check if gameId allready exits
+    //@param uint _gameId is the id of a game
+    //@return bool, true if the gameId dont already exits and false if exits
+    function checkGame(uint _gameId) public view returns(bool){
+
+        //check if Games[] hold something
+        if(Games.length != 0){
+
+            //go thought all the games
+            for(uint i = 0; i <= Games.length; i++){
+
+                //check if id already exits
+                if(Games[i].game_id == _gameId){
+
+                    return (false);                         //return false if gameId already begin used
+
+                } else {
+                    return (true);                          //return true if gameId is not begin used
+                }
+            }
+        } else{
+            return (true);                                  //return if Games[] dont hold anything
+        }
     }
 
     //createTicket function create ticket to a game

@@ -47,7 +47,7 @@ contract Services{
         //mobile number to owner
         int mobile;
         //which ticket the owner owns
-        uint[] ticket_own;
+        uint[50] ticketOwns;
     }
 
     //all Owners
@@ -59,25 +59,26 @@ contract Services{
     //all Tickets
     ticket[] Tickets;
 
+    //Create event for CreateGame
     event CreateGame(uint _GameId, string _homeTeam, string _foreignTeam, uint _tickets);
 
+    //Create event for CreateTicket
     event CreateTicket(uint _ticketId, uint _GameId, bool _available, int _price, bool _vaildate);
 
-    event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile, uint[]  _ticketOwns);
+    //Create event for CreateOwner
+    event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile, uint[50] _ticketOwns);
 
-    function createOwner(uint _ownerId, string memory _name, address _addr, int _mobile, uint[] memory _ticketOwns) public returns(bool){
-        require(Owners[_ownerId].owner_id != _ownerId, "The owner id is already beging used");
-        require(Owners[_ownerId].addr != _addr, "The address is already begin used");
-        owner memory o = owner(_ownerId, _name, _addr, _mobile, _ticketOwns);
+    function createOwner(uint _ownerId, string memory _name, address _addr, int _mobile) public returns(bool){
+        uint[50] memory t;
+        owner memory o = owner(_ownerId, _name, _addr, _mobile, t);
         Owners.push(o);
-        emit CreateOwner(_ownerId, _name, _addr, _mobile, _ticketOwns);
+        emit CreateOwner(_ownerId, _name, _addr, _mobile, t);
         return true;
     }
 
     //Create a game in Game[] and then create the number of ticket in the game in Tickets[]
-    //returns if function can push Game and ticket to memory
+    //return true if function push Game and ticket to memory
     function createGame(uint _Gameid, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public returns(bool){
-        require(Games[_Gameid].game_id != _Gameid, "The game already exits");
         game memory g = game(_Gameid, _homeTeam, _foreignTeam, _tickets);
         
         //Create number of ticket with _tickets in Tickets[], also include the same _Gameid as Games[] belong to

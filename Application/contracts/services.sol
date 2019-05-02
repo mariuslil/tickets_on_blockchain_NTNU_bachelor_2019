@@ -76,12 +76,11 @@ contract Services{
     //@returns bool, return true if the function was successfull
     function createOwner(uint _ownerId, string memory _name, address _addr, int _mobile) public returns(bool){
 
-        owner memory o = owner(_ownerId, _name, _addr, _mobile);      //Create a temporary memory of struct owner
-
         //call the function checkOwner to check _ownerId and _addr
         if(checkOwner(_ownerId, _addr) == false){
             return (false);
         } else {
+            owner memory o = owner(_ownerId, _name, _addr, _mobile);      //Create a temporary memory of struct owner
             Owners.push(o);
 
             emit CreateOwner(_ownerId, _name, _addr, _mobile);         //Emit an event on success
@@ -98,10 +97,10 @@ contract Services{
     function checkOwner(uint _ownerId, address _addr) public view returns(bool){
 
         //check if Owners[] holds something
-        if(Owners.length != 0){
+        if(getCounterOwner() != 0){
 
             //check every Owners[]
-            for(uint i = 0; i <= Owners.length; i++){
+            for(uint i = 0; i < getCounterOwner(); i++){
 
                 //if owner_id and _addr is the same
                 if(Owners[i].owner_id == _ownerId && Owners[i].addr == _addr){
@@ -109,11 +108,13 @@ contract Services{
                     return (false);                                                 //return false, id and addr already begin used
                 }
             }
-            return (true);                                                          //return true, is not begin used
-
-        } else{
-            return (true);                                                          //return true, Owners dont hold anything
         }
+
+        return (true);                                                          //return true, Owners dont hold anything
+    }
+
+    function getCounterOwner() public view returns(uint){
+        return (Owners.length);
     }
 
     //Create a game and tickets in Game[]
@@ -124,10 +125,10 @@ contract Services{
     //@param int _price is the price of a ticket
     //@return true if function was successful
     function createGame(uint _gameId, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public returns(bool){
-        game memory g = game(_gameId, _homeTeam, _foreignTeam, _tickets);       //Create a temporary memory of struct game
         if(checkGame(_gameId) == false){
             return (false);
         } else{
+            game memory g = game(_gameId, _homeTeam, _foreignTeam, _tickets);       //Create a temporary memory of struct game
             Games.push(g);
        
             emit CreateGame(_gameId, _homeTeam, _foreignTeam, _tickets);            //Emit an event on success 
@@ -144,23 +145,22 @@ contract Services{
     function checkGame(uint _gameId) public view returns(bool){
 
         //check if Games[] hold something
-        if(Games.length != 0){
+        if(getCountGame() != 0){
 
             //go thought all the games
-            for(uint i = 0; i <= Games.length; i++){
+            for(uint i = 0; i < getCountGame(); i++){
 
                 //check if id already exits
                 if(Games[i].game_id == _gameId){
-
                     return (false);                         //return false if gameId already begin used
-
-                } else {
-                    return (true);                          //return true if gameId is not begin used
-                }
+                } 
             }
-        } else{
-            return (true);                                  //return if Games[] dont hold anything
-        }
+        } 
+        return (true);                                  //return if Games[] dont hold anything
+    }
+
+    function getCountGame() public view returns(uint){
+        return(Games.length);
     }
 
     //createTicket function create ticket to a game
@@ -232,6 +232,13 @@ contract Services{
         return (false);                                                     //return false if failed
     }
 
+    function buyManyTicket(uint _ownerId, uint _gameId, uint _tickets) public returns(bool){
+        for(uint i = 0; i <= _tickets; i++){
+            buyTicket(_ownerId, _gameId);
+        }
+
+    }
+
     //getTicketOwner function is to get a ticket from owner
     //@param uint _ownerId is the id of owner
     //@param uint _ticketId is the id of ticket
@@ -240,7 +247,7 @@ contract Services{
         return(Owners[_ownerId].owner_id, Owners[_ownerId].tickets[_ticketId].ticket_id);
     }
 
-    function vaildateTicket(uint _ticketId) public returns(bool){
+    function vaildateTicket(uint _ownerId, uint _ticketId) public returns(bool){
 
     }
 }

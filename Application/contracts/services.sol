@@ -2,6 +2,7 @@ pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
 -Create function for vailedate ticket
+-Create function for get all ticket to owner
 
 Extra:
 -Create struct season
@@ -216,10 +217,8 @@ contract Services{
     //@param uint _gameId is the the id of game the owner want but ticket
     //@return true if there are any ticket available, false if no ticket available
     function buyTicket(uint _ownerId, uint _gameId) public returns(bool){
-
         //check all ticket in a game
         for(uint i = 0; i < Games[_gameId].number_of_tickets; i++){
-
             //if are any ticket available
             if(Games[_gameId].tickets[i].state == States.available){
 
@@ -233,7 +232,9 @@ contract Services{
         return (false);                                                     //return false if failed
     }
 
-    function getTicketOwner(uint _ownerId) public view returns(uint){
+
+    function getTicketOwner(uint _ownerId, uint _ticketId) public view returns(uint, uint){
+        return(Owners[_ownerId].owner_id, Owners[_ownerId].tickets[_ticketId].ticket_id);
     }
 
     function vaildateTicket(uint _ticketId) public returns(bool){

@@ -232,7 +232,10 @@ contract Services{
         return (false);                                                     //return false if failed
     }
 
-
+    //getTicketOwner function is to get a ticket from owner
+    //@param uint _ownerId is the id of owner
+    //@param uint _ticketId is the id of ticket
+    //@return uint and uint, the ownerID and ticketId
     function getTicketOwner(uint _ownerId, uint _ticketId) public view returns(uint, uint){
         return(Owners[_ownerId].owner_id, Owners[_ownerId].tickets[_ticketId].ticket_id);
     }

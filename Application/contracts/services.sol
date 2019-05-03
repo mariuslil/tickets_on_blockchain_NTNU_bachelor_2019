@@ -3,6 +3,7 @@ pragma solidity >=0.4.22 <0.6.0;
 /* TODO:
 -Create function for vailedate ticket
 -Create function for get all ticket to owner
+-Create function for find position for ticket in Owners and Games
 
 Extra:
 -Create struct season
@@ -46,6 +47,8 @@ contract Services{
         address addr;
         //mobile number to owner
         int mobile;
+        //number of ticket own
+        uint ticketOwns;
         //which ticket the owner owns
         mapping(uint => ticket) tickets;
     }
@@ -66,7 +69,7 @@ contract Services{
     event CreateTicket(uint _ticketId, uint _GameId, int _price, States state);
 
     //Create event for CreateOwner
-    event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile);
+    event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile, uint _ticketOwns);
 
     //createOwner function goal is to create a owner in Onwers[]
     //@param uint _ownerId setting the id to owner
@@ -80,10 +83,10 @@ contract Services{
         if(checkOwner(_ownerId, _addr) == false){
             return (false);
         } else {
-            owner memory o = owner(_ownerId, _name, _addr, _mobile);      //Create a temporary memory of struct owner
+            owner memory o = owner(_ownerId, _name, _addr, _mobile, 0);      //Create a temporary memory of struct owner
             Owners.push(o);
 
-            emit CreateOwner(_ownerId, _name, _addr, _mobile);         //Emit an event on success
+            emit CreateOwner(_ownerId, _name, _addr, _mobile, 0);         //Emit an event on success
         
             return (true);
         }
@@ -251,28 +254,6 @@ contract Services{
         return (counter);               //return the number of ticket available
     }
 
-    //buyTicket let a owner buy a ticket in game
-    //@param uint _ownerId is the id of the owner
-    //@param uint _gameId is the the id of game the owner want but ticket
-    //@return true if there are any ticket available, false if no ticket available
-    function buyTicket(uint _ownerId, uint _gameId) public returns(bool){
-        uint posG = findPosGame(_gameId);
-        uint posO = findPosOwner(_ownerId);
-
-        //check all ticket in a game
-        for(uint i = 0; i < Games[posG].number_of_tickets; i++){
-            //if are any ticket available
-            if(Games[posG].tickets[i].state == States.available){
-
-                Games[posG].tickets[i].state = States.bought;            //change the state to bought
-
-                Owners[posO].tickets[i]= Games[posG].tickets[i];     //copy the ticket information to owner
-
-                return(true);                                               //return true if successfull
-            }
-        }
-        return (false);                                                     //return false if failed
-    }
 
     //buyTicket let a owner buy a tickets in game
     //@param uint _ownerId is the id of the owner
@@ -284,15 +265,16 @@ contract Services{
 
             //go throught the tickets owner want to buy
             for(uint i = 0; i < _tickets; i++){
-                
+
                 //if are any ticket available
                 if(checkTicketAvailable(_gameId) == false){
                 
                     return (false);                                    //return false if buy more ticket then available
 
                 }
-
+            
                 Owners[posO].tickets[i]= Games[posG].tickets[i];     //copy the ticket information to owner
+                Owners[posO].ticketOwns++;
             }
             return (true);                                          //return true if was successfull
     }
@@ -325,7 +307,27 @@ contract Services{
         return(Owners[pos].owner_id, Owners[pos].tickets[_ticketId].ticket_id);
     }
 
-    function vaildateTicket(uint _ownerId, uint _ticketId) public returns(bool){
+    //vaildateTicket function is to change the state of å ticket to spent
+    //@param uint _ownerId is the id of a owner
+    //@param uint _ticketId is the id of a ticket
+    //@param uint _gameId is the id of a game
+    //@return boo, true if ticket was successfull vaildate and change state spent, false if failed
+    function vaildateTicket(uint _ownerId, uint _ticketId, uint _gameId) public returns(bool){
+        uint posG = findPosGame(_gameId);
+        uint posO = findPosOwner(_ownerId);
+
+        //check if the the ticket is bought
+        if(Owners[posO].tickets[_ticketId].state == States.bought){
+
+            Owners[posO].tickets[_ticketId].state = States.spent;                           //change state to spent
+
+            Owners[posO].tickets[_ticketId] = Games[posG].tickets[_ticketId];               //copy the ticket info to Games[]
+
+            return (true);                                                                  //retunr true if was suucessfull
+        } else {
+
+            return (false);                                                                 //return false
+        }
 
     }
 }

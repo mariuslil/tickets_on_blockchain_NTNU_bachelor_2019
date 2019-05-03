@@ -1,7 +1,6 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
--Create function for vailedate ticket
 -Create function for get all ticket to owner
 -Create function for find position for ticket in Owners and Games
 
@@ -311,7 +310,7 @@ contract Services{
     //@param uint _ownerId is the id of a owner
     //@param uint _ticketId is the id of a ticket
     //@param uint _gameId is the id of a game
-    //@return boo, true if ticket was successfull vaildate and change state spent, false if failed
+    //@return bool, true if ticket was successfull vaildate and change state spent, false if failed
     function vaildateTicket(uint _ownerId, uint _ticketId, uint _gameId) public returns(bool){
         uint posG = findPosGame(_gameId);
         uint posO = findPosOwner(_ownerId);

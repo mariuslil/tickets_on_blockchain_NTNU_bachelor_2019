@@ -1,14 +1,10 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
--Create function for vailedate ticket
--Create function for get all ticket to owner
--Create function for find position for ticket in Owners and Games
 
 Extra:
 -Create struct season
 -Create function create season 
--Create function get list over available Tickets
 -Make a score variable in struct game 
 */
 
@@ -62,14 +58,23 @@ contract Services{
     //all Games
     game[] Games;
 
-    //Create event for CreateGame
+    //Create event for createGame
     event CreateGame(uint _GameId, string _homeTeam, string _foreignTeam, uint _tickets);
 
-    //Create event for CreateTicket
+    //Create event for createTicket
     event CreateTicket(uint _ticketId, uint _GameId, int _price, States state);
 
-    //Create event for CreateOwner
+    //Create event for createOwner
     event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile, uint _ticketOwns);
+
+    //Create event for buyTickets
+    event BuyTickets(uint _ownerId, uint _gameId, uint _tickets);
+
+    //Create event for buyTicket
+    event BuyTicket(uint _ownerId, uint _gameId, uint _ticketId, int _price, States state);
+
+    //Create event for TicketState
+    event TicketState(uint _ownerId, uint _gameId, uint _ticketId, States state);
 
     //createOwner function goal is to create a owner in Onwers[]
     //@param uint _ownerId setting the id to owner
@@ -98,6 +103,7 @@ contract Services{
     //@param address _addr is the address begin check 
     //@returns string and bool, return true if not begin used, and false if are already used
     function checkOwner(uint _ownerId, address _addr) public view returns(bool){
+
         //check if Owners[] holds something
         if(getCounterOwner() != 0){
 
@@ -241,10 +247,10 @@ contract Services{
     //@return uint of number available in a game
     function getTicketAvailable(uint _gameId) public view returns(uint){
         uint counter = 0;
-        uint pos =findPosGame(_gameId);
+        uint pos = findPosGame(_gameId);
 
         //check alle tickets in a game
-        for(uint i = 0; i <= Games[pos].number_of_tickets; i++){
+        for(uint i = 0; i < Games[pos].number_of_tickets; i++){
 
             //if is successful, will add to the counter
             if(Games[pos].tickets[i].state == States.available && Games[pos].tickets[i].game_id == Games[pos].game_id){
@@ -259,63 +265,59 @@ contract Services{
     //@param uint _ownerId is the id of the owner
     //@param uint _gameId is the the id of game the owner want but ticket
     //@return true if there are any ticket available, false if no ticket available
-    function buyManyTicket(uint _ownerId, uint _gameId, uint _tickets) public returns(bool){
+    function buyTickets(uint _ownerId, uint _gameId, uint _tickets) public returns(bool){
         uint posG = findPosGame(_gameId);
         uint posO = findPosOwner(_ownerId);
-        uint posT = getTicketsOwn(_ownerId);
 
             //go throught the tickets owner want to buy
             for(uint i = 0; i < _tickets; i++){
 
+                uint posT = checkTicketsOwn(posO);
+
                 //if are any ticket available
-                if(checkTicketAvailable(_gameId) == false){
+                if(checkTicketAvailable(posG) == false){
                 
                     return (false);                                    //return false if buy more ticket then available
 
-                } else if(posT == 0){
-
-                    Owners[posO].tickets[posT]= Games[posG].tickets[i];     //copy the ticket information to owner
-
-                    Owners[posO].ticketOwns++;
-
-                } else{
-
-                     Owners[posO].tickets[i]= Games[posG].tickets[i];
                 }
 
+                Owners[posO].tickets[posT]= Games[posG].tickets[i];     //copy the ticket information to owner
+
+                Owners[posO].ticketOwns++;
+
+                emit BuyTicket(_ownerId, _gameId, posT, Owners[posO].tickets[posT].price, Owners[posO].tickets[posT].state);
             }
+
+            emit BuyTickets(_ownerId, _gameId, _tickets);
+
             return (true);                                          //return true if was successfull
     }
 
     //getTicketsOwn function is how many ticket owner owns
     //@param uint _ownerId is the id of a owner
     //@return uint of number ticket own
-    function getTicketsOwn(uint _ownerId) public view returns(uint){
-        uint posO = findPosOwner(_ownerId);
+    function checkTicketsOwn(uint _posO) public view returns(uint){
 
         //check if owner owns tickets
-        if(Owners[posO].ticketOwns != 0){
+        if(Owners[_posO].ticketOwns != 0){
+            
+            return(Owners[_posO].ticketOwns);        //return number if ticket owns
+        } 
 
-            return(Owners[posO].ticketOwns);        //return number if ticket owns
-
-        } else{
-
-            return 0;                               //return 0 if own no tickets
-        }
+        return 0;                               //return 0 if own no tickets
     }
 
     //checkTicketAvailable function check if a ticket in a game
     //@param uint _gameId is the id of a game
     //@return bool, true if there are ticket available, false if no ticket available
-    function checkTicketAvailable(uint _gameId)public returns(bool){
-        uint pos = findPosGame(_gameId);
+    function checkTicketAvailable(uint _posG)public returns(bool){
 
         //check all the ticket in Games[pos]
-        for(uint i = 0; i < Games[pos].number_of_tickets; i++){
+        for(uint i = 0; i < Games[_posG].number_of_tickets; i++){
                 //if are any ticket available
-                if(Games[pos].tickets[i].state == States.available){
+                if(Games[_posG].tickets[i].state == States.available){
 
-                    Games[pos].tickets[i].state = States.bought;            //change the state to bought
+                    Games[_posG].tickets[i].state = States.bought;            //change the state to bought
 
                     return (true);                                          //return true if was successful
                 }
@@ -332,11 +334,44 @@ contract Services{
         return(Owners[pos].owner_id, Owners[pos].ticketOwns);
     }
 
+    //checkTicket function is to check which game ticket is used for
+    //@param uint _ownerId is the id of a owner
+    //@param uint _gameId is the id of a game
+    //@param uint _tickets is the function check for
+    function checkTicket(uint _ownerId, uint _gameId, uint _tickets) public view returns(uint){
+        uint pos = findPosOwner(_ownerId);
+    
+        //check ticket gameId
+        if(Owners[pos].tickets[_tickets].game_id == _gameId){
+
+            return (_tickets);
+        }
+    }
+
+    //checkTickets function is to check how many own tickets to a game
+    //@param uint _ownerId is the id of a owner
+    //@param uint _gameId is the id of a game
+    //@return uint counter with how many ticket own to a game
+    function checkTickets(uint _ownerId, uint _gameId) public view returns(uint){
+        uint pos = findPosOwner(_ownerId);
+        uint counter = 0;
+
+        //go throught ever own ticket
+        for(uint i = 0; i < Owners[pos].ticketOwns; i++){
+
+            //check ticket gameId
+            if(Owners[pos].tickets[i].game_id == _gameId){
+                counter++;                                                          //add to counter if gamedId is same
+            }
+        }
+        return(counter);                                                            //return counter of how many ticket own in a game
+    }
+
     //vaildateTicket function is to change the state of å ticket to spent
     //@param uint _ownerId is the id of a owner
     //@param uint _ticketId is the id of a ticket
     //@param uint _gameId is the id of a game
-    //@return boo, true if ticket was successfull vaildate and change state spent, false if failed
+    //@return bool, true if ticket was successfull vaildate and change state spent, false if failed
     function vaildateTicket(uint _ownerId, uint _ticketId, uint _gameId) public returns(bool){
         uint posG = findPosGame(_gameId);
         uint posO = findPosOwner(_ownerId);
@@ -348,19 +383,20 @@ contract Services{
 
             Owners[posO].tickets[_ticketId] = Games[posG].tickets[_ticketId];               //copy the ticket info to Games[]
 
-            return (true);                                                                  //retunr true if was suucessfull
-        } else {
+            emit TicketState(_ownerId, _gameId, _ticketId, Owners[posO].tickets[_ticketId].state);
 
+            return (true);                                                                  //return true if was suucessfull
+
+        } else {
             return (false);                                                                 //return false
         }
-
     }
 
     //vaildateTicket function is to change the state of å ticket to invaild
     //@param uint _ownerId is the id of a owner
     //@param uint _ticketId is the id of a ticket
     //@param uint _gameId is the id of a game
-    //@return boo, true if ticket was successfull vaildate and change state invaild, false if failed
+    //@return bool, true if ticket was successfull vaildate and change state invaild, false if failed
     function invaildTicket(uint _ownerId, uint _ticketId, uint _gameId) public returns(bool){
         uint posG = findPosGame(_gameId);
         uint posO = findPosOwner(_ownerId);
@@ -372,9 +408,11 @@ contract Services{
 
             Owners[posO].tickets[_ticketId] = Games[posG].tickets[_ticketId];               //copy the ticket info to Games[]
 
-            return (true);                                                                  //retunr true if was suucessfull
-        } else {
+            emit TicketState(_ownerId, _gameId, _ticketId, Owners[posO].tickets[_ticketId].state);
 
+            return (true);                                                                  //return true if was suucessfull
+
+        } else {
             return (false);                                                                 //return false if failed
         }
     }

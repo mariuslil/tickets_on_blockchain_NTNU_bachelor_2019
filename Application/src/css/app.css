@@ -1,11 +1,47 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: white;
+}
+
 h1{
+    float: center;
+    text-align: center;
+    font-size: 3em;
+    text-decoration: none;
+}
+
+h1 a{
+    text-decoration: none;
+    color:black;
+}
+
+h2{
+    float: center;
     text-align: center;
 }
 
-#buttons{
-    background-color: lightblue;
-    text-align: center;
-    font-size: 2em;
-    text-align: center;
-    padding: 10px;
+.menubar{
+  overflow: hidden;
+  background-color:black;
+  width: 100%;
+  bottom: 0;
+}
+
+.menubar a {
+  float: left;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 10px 15px;
+  text-decoration: none;
+}
+
+.menubar a:hover, .menubar a:active {
+  background-color: gray;
+}
+
+.menubar a:visited{
+    color: white;
+    text-decoration: none;
 }

@@ -1,11 +1,7 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
-
-Extra:
--Create struct season
--Create function create season 
--Make a score variable in struct game 
+-Status game 
 */
 
 contract Services{
@@ -32,6 +28,8 @@ contract Services{
         string foreignTeam;
         //the number of ticket in a game
         uint number_of_tickets;
+        //the state of a Games
+        GameStates gameState;
         //create a mapping to struct tickets
         mapping(uint => ticket) tickets;
     }
@@ -53,6 +51,9 @@ contract Services{
 
     //enum which state the ticket is in
     enum States {available, bought, spent, invaild}
+
+    //enum for which state a game is
+    enum GameStates{notStarted, ongoing, ended}
 
     //all Owners
     owner[] Owners;
@@ -156,7 +157,7 @@ contract Services{
         if(checkGame(_gameId) == false){
             return (false);
         } else{
-            game memory g = game(_gameId, _homeTeam, _foreignTeam, _tickets);       //Create a temporary memory of struct game
+            game memory g = game(_gameId, _homeTeam, _foreignTeam, _tickets, GameStates.notStarted);       //Create a temporary memory of struct game
             Games.push(g);
        
             emit CreateGame(_gameId, _homeTeam, _foreignTeam, _tickets);            //Emit an event on success 
@@ -234,10 +235,10 @@ contract Services{
         return 0;                                                   //return 0 if there are no games
     }
 
-    //getTicket function is to get a ticket by it's gameId and ticketId
+    //getTicket function is to get a ticket by it's gameId and ticketPos
     //@param uint _gameId is the id of a game
     //@param uint _ticketId is the id of ticket in the game
-    //@return gameId, ticketId and state to a ticket
+    //@return gameId, ticketPos and state to a ticket
     function getTicket(uint _gameId, uint _ticketPos) public view returns(uint, uint, uint, States state){
         uint pos =findPosGame(_gameId);
         
@@ -245,6 +246,19 @@ contract Services{
         Games[pos].tickets[_ticketPos].game_id,
         Games[pos].tickets[_ticketPos].owner_id, 
         Games[pos].tickets[_ticketPos].state);
+    }
+
+    //getGame function is to get all the information to a game
+    //@param uint _gameId is the id of a game
+    //@return gameId, homeTeam, foreignTeam, number of ticket and gameState
+    function getGame(uint _gameId) public view returns(uint, string memory, string memory, uint, GameStates state){
+        uint pos =findPosGame(_gameId);
+
+        return(Games[pos].game_id,
+        Games[pos].homeTeam,
+        Games[pos].foreignTeam,
+        Games[pos].number_of_tickets,
+        Games[pos].gameState);
     }
 
     //Return number of ticket available in a game
@@ -286,6 +300,8 @@ contract Services{
 
                 }
                 Games[posG].tickets[i].owner_id = _ownerId;
+
+                Games[posG].tickets[i].state = States.bought;
 
                 Owners[posO].tickets[posT] = Games[posG].tickets[i];     //copy the ticket information to owner
 
@@ -382,6 +398,36 @@ contract Services{
         return(counter);                                                            //return counter of how many ticket own in a game
     }
 
+    //gameStart function is the change the state of a game to ongoing
+    //@param uint _gameId is the id of a game
+    //@return bool, true if was successful, false if failed
+    function gameStart(uint _gameId) public returns(bool) {
+        uint pos = findPosGame(_gameId);
+
+        if(Games[pos].gameState == GameStates.notStarted){
+
+            Games[pos].gameState = GameStates.ongoing;
+
+            return (true);
+        }
+        return (false);
+    }
+
+    //gameEnded function is the change the state of a game to ënded
+    //@param uint _gameId is the id of a game
+    //@return bool, true if was successful, false if failed
+    function gameEnded(uint _gameId) public returns(bool) {
+        uint pos = findPosGame(_gameId);
+
+        if(Games[pos].gameState == GameStates.ongoing){
+
+            Games[pos].gameState = GameStates.ended;
+
+            return (true);
+        }
+        return (false);
+    }
+
     //vaildateTicket function is to change the state of å ticket to spent
     //@param uint _ownerId is the id of a owner
     //@param uint _gameId is the id of a game
@@ -390,14 +436,13 @@ contract Services{
         uint posG = findPosGame(_gameId);
         uint posO = findPosOwner(_ownerId);
 
-        if(!checkGame(_gameId)){
+        if(!checkGame(_gameId) && Games[posG].gameState == GameStates.ongoing){
             for(uint i = 0; i < Owners[posO].ticketOwns; i++){
-                if(checkTicket(posO, i, _gameId)){
-                Owners[posO].tickets[i].state = States.spent;                           //change state to spent
-
+                if(checkTicket(posO, i, _gameId) && Owners[posO].tickets[i].state == States.bought){
                 uint tickPos =  Owners[posO].tickets[i].ticketPos;
+                Games[posG].tickets[tickPos].state = States.spent;                           //change state to spent
 
-                Games[posG].tickets[tickPos] = Owners[posO].tickets[i];              //copy the ticket info to Games[]
+                Owners[posO].tickets[i] = Games[posG].tickets[tickPos];            //copy the ticket info to Games[]
 
                 emit TicketState(_ownerId, _gameId, i, Owners[posO].tickets[i].state);
 
@@ -421,12 +466,13 @@ contract Services{
 
         if(!checkGame(_gameId)){
             for(uint i = 0; i < Owners[posO].ticketOwns; i++){
-                if(checkTicket(posO, i, _gameId)){
-                Owners[posO].tickets[i].state = States.invaild;                           //change state to spent
-
+                if(checkTicket(posO, i, _gameId) && Owners[posO].tickets[i].state == States.spent){
                 uint tickPos =  Owners[posO].tickets[i].ticketPos;
 
-                Games[posG].tickets[tickPos] = Owners[posO].tickets[i];              //copy the ticket info to Games[]
+                Games[posG].tickets[tickPos].state = States.invaild;                           //change state to spent
+
+
+                Owners[posO].tickets[i] = Games[posG].tickets[tickPos];                //copy the ticket info to Games[]
 
                 emit TicketState(_ownerId, _gameId, i, Owners[posO].tickets[i].state);
 

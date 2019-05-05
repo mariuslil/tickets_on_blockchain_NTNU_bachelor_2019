@@ -25,6 +25,18 @@
     </div>
 
     <button class="style" type="button">Finshed</button>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            web3 = new Web3(new Web3.providers.httpProvider("https://localhost:7545"));
+        }
+
+    </script>
 </body>
 
 </html>

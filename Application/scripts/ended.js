@@ -1,4 +1,4 @@
-//THe script is for change the state of a ticket o invaild and game to ended
+//The script is for change the state of a ticket o invaild and game to ended
 
 module.exports = function (callback) {
     const TruffleContract = require("truffle-contract");
@@ -13,7 +13,7 @@ module.exports = function (callback) {
         contract.deployed().then(function (instance) {
             billet = instance;
 
-            var ended14 = billet.gameEnded(14, { from: account[0] });
+            var ended14 = billet.gameEnded(14, { from: account[0], to: account[0] });
             console.log("gameEnded for game 14");
             ended14.then(function (ended) {
                 console.log("Game 14 has end", ended)
@@ -21,7 +21,7 @@ module.exports = function (callback) {
                 console.log(e);
             });
 
-            var ended17 = billet.gameEnded(17, { from: account[0] });
+            var ended17 = billet.gameEnded(17, { from: account[1], to: account[1] });
             console.log("gameEnded for game 17");
             ended17.then(function (ended) {
                 console.log("Game 14 has end", ended)

@@ -13,7 +13,7 @@ module.exports = function (callback) {
         contract.deployed().then(function (instance) {
             billet = instance;
 
-            var o13 = billet.getOwner(13, { from: account[0] });
+            var o13 = billet.getOwner(13, { from: account[2], to: account[2] });
             console.log("getOwner 13");
             o13.then(function (Owner13) {
                 console.log("Owner 13: ", Owner13);
@@ -21,7 +21,7 @@ module.exports = function (callback) {
                 console.log(e);
             });
 
-            var o26 = billet.getOwner(26, { from: account[1] });
+            var o26 = billet.getOwner(26, { from: account[3], to: account[3] });
             console.log("getOwner 26");
             o26.then(function (Owner26) {
                 console.log("Owner 26: ", Owner26);
@@ -29,7 +29,7 @@ module.exports = function (callback) {
                 console.log(e);
             });
 
-            var o2 = billet.getOwner(2, { from: account[2] });
+            var o2 = billet.getOwner(2, { from: account[4], to: account[4] });
             console.log("getOwner 13");
             o2.then(function (Owner2) {
                 console.log("Owner 2: ", Owner2);

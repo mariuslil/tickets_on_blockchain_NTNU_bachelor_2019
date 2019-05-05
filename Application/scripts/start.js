@@ -13,7 +13,7 @@ module.exports = function (callback) {
         contract.deployed().then(function (instance) {
             billet = instance;
 
-            var start14 = billet.gameStart(14, { from: account[0] });
+            var start14 = billet.gameStart(14, { from: account[0], to: account[0] });
             console.log("gameEnded for game 14");
             start14.then(function (Startet) {
                 console.log("Game 14 has Startet: ", Startet)
@@ -21,7 +21,7 @@ module.exports = function (callback) {
                 console.log(e);
             });
 
-            var start17 = billet.gameStart(17, { from: account[0] });
+            var start17 = billet.gameStart(17, { from: account[1], to: account[1] });
             console.log("gameEnded for game 17");
             start17.then(function (Startet) {
                 console.log("Game 17 has started:", Startet)

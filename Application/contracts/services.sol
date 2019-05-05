@@ -1,13 +1,13 @@
 pragma solidity >=0.4.22 <0.6.0;
 
 /* TODO:
--Status game 
+-change owner to User
 */
 
 contract Services{
 
     struct ticket{
-        //the position
+        //the position of a ticket
         uint ticketPos;
         //the id of a owner
         uint owner_id;
@@ -22,6 +22,8 @@ contract Services{
     struct game{
         //the id of game
         uint game_id;
+        //the id of event organizer
+        uint evnetOrganizer_id;
         //name of the home team
         string homeTeam;
         //the name of foreign team
@@ -49,6 +51,15 @@ contract Services{
         mapping(uint => ticket) tickets;
     }
 
+    struct eventOrganizer{
+        //the id of event organizer
+        uint evnetOrganizer_id;
+        //the name of event
+        string name;
+        //the address of event organizer
+        address addr;
+    }
+
     //enum which state the ticket is in
     enum States {available, bought, spent, invaild}
 
@@ -61,14 +72,20 @@ contract Services{
     //all Games
     game[] Games;
 
+    //all event Organizer
+    eventOrganizer[] EventOrganizers;
+
     //Create event for createGame
-    event CreateGame(uint _GameId, string _homeTeam, string _foreignTeam, uint _tickets);
+    event CreateGame(uint _gameId, uint _evnetOrganizerId, string _homeTeam, string _foreignTeam, uint _tickets, GameStates state);
 
     //Create event for createTicket
-    event CreateTicket(uint _ticketPos, uint _ownerId,  uint _GameId, int _price, States state);
+    event CreateTicket(uint _ticketPos, uint _ownerId,  uint _gameId, int _price, States state);
 
     //Create event for createOwner
     event CreateOwner(uint _ownerId, string  _name, address _addr, int _mobile, uint _ticketOwns);
+
+    //Create event for createEvent
+    event CreateEventOrganizer(uint _evnetOrganizerId, string _name, address _addr);
 
     //Create event for buyTickets
     event BuyTickets(uint _ownerId, uint _gameId, uint _tickets);
@@ -79,6 +96,121 @@ contract Services{
     //Create event for TicketState
     event TicketState(uint _ownerId, uint _gameId, uint _ticketId, States state);
 
+    //Create event for change gameState
+    event GameSate(uint _gameId, uint _evnetOrganizerId, string _homeTeam, string _foreignTeam, GameStates state);
+
+    //createEventOrganizer function is to create a event organizer in EventOrganizers[]
+    //@param string memory _name is the name of a event organizer
+    //@param address _addr is teh ethereum address to event organizer
+    //@return bool, true if was successfull created, false if failed
+    function createEventOrganizer(string memory _name, address _addr, uint _evnetOrganizerId) public returns(bool){
+
+        //check if address is allready in used, add owner address check
+        if(checkEventOrganizer(_addr, _evnetOrganizerId) == false && checkAddr(_addr) == false){
+
+            return(false);                                  //return false if the address is already in used
+
+        } else{
+
+            eventOrganizer memory e =eventOrganizer(_evnetOrganizerId, _name, _addr);      //Create a temporary memory of struct eventOrganizer
+            EventOrganizers.push(e);
+
+            emit CreateEventOrganizer(_evnetOrganizerId, _name, _addr);                    //Emit on success
+            return (true);
+        }
+    }
+
+    //checkEventOrganizer function is to make sure that address aren't begin used more then one time
+    //@param address _addr is the address begin check 
+    //@returns bool, return true if not begin used, and false if are already used
+    function checkEventOrganizer(address _addr, uint _evnetOrganizerId)public view returns(bool){
+
+        //check if EventOrganizers[] hold something
+        if(getCounterEventOrganizer() != 0){
+
+            //go throught all EventOrganizers
+            for(uint i =0; i < getCounterEventOrganizer(); i ++){
+
+                //check if the address is used
+                if(EventOrganizers[i].addr == _addr && EventOrganizers[i].evnetOrganizer_id == _evnetOrganizerId){
+
+                    return(false);                          //return false if address is already in used
+                }
+            }
+        } 
+        return (true);                                      //return true if address is not begin used
+    }
+
+    //checkAddr function is to make sure that address aren't begin used more then one time
+    //@param address _addr is the address begin check 
+    //@returns bool, return true if not begin used, and false if are already used
+    function checkAddr(address _addr)public view returns(bool){
+
+        //check if EventOrganizers[] hold something
+        if(getCounterEventOrganizer() != 0){
+
+            //go throught all EventOrganizers
+            for(uint i =0; i < getCounterEventOrganizer(); i ++){
+
+                //check if the address is used
+                if(EventOrganizers[i].addr == _addr){
+
+                    return(false);                                                 //return false if address is already in used
+                }
+            }
+        } 
+
+        //check if Owners[] holds something
+        if(getCounterOwner() != 0){
+
+            //check every Owners[]
+            for(uint i = 0; i < getCounterOwner(); i++){
+
+                //if ownerId and addr is the same
+                if(Owners[i].addr == _addr){
+                    
+                    return (false);                                                 //return false, id and addr already begin used
+                }
+            }
+        }
+
+        return (true);                                                             //return true if address is not begin used
+    }
+
+    //getCounterEventOrganizer function is count how many object is in the EventOrganizers[]
+    //@return uint of how many object is in the EventOrganizers[]
+    function getCounterEventOrganizer() public view returns(uint){
+        return EventOrganizers.length;
+    }
+
+
+    //findPosEventOrganizer function is to find the position of a event organizer
+    //@param uint  _evnetOrganizerId is the the id of a event organizer
+    //@return uint of position to evnetOrganizerId in the EventOrganizers[]
+    function findPosEventOrganizer(uint _evnetOrganizerId) public view returns(uint){
+
+        //go through ever object in EventOrganizers[]
+        for(uint i= 0; i < getCounterEventOrganizer(); i++){
+
+            //check if the ownerId matches
+            if(EventOrganizers[i].evnetOrganizer_id == _evnetOrganizerId){
+                return (i);                                             //return the position
+            }
+        }
+        return 0;                                                       //return 0 if there are no objekt in EventOrganizers[]
+    }
+
+    //getEventOrganizer function is get all the information about a event organizer
+    //@param uint _evnetOrganizerId is the id of evnet organizer
+    //@return uint of the evnet Organizer Id, string of evnet Organizer name and address of evnet Organizer
+    function getEventOrganizer(uint _evnetOrganizerId)public view returns(uint, string memory, address){
+        uint pos = findPosEventOrganizer(_evnetOrganizerId);
+
+        return(EventOrganizers[pos].evnetOrganizer_id,
+        EventOrganizers[pos].name,
+        EventOrganizers[pos].addr);
+    }
+
     //createOwner function goal is to create a owner in Onwers[]
     //@param uint _ownerId setting the id to owner
     //@param string memory _name setting full name
@@ -88,8 +220,10 @@ contract Services{
     function createOwner(uint _ownerId, string memory _name, address _addr, int _mobile) public returns(bool){
 
         //call the function checkOwner to check _ownerId and _addr
-        if(checkOwner(_ownerId, _addr) == false){
+        if(checkOwner(_ownerId, _addr) == false && checkAddr(_addr) == false ){
+
             return (false);
+
         } else {
             owner memory o = owner(_ownerId, _name, _addr, _mobile, 0);      //Create a temporary memory of struct owner
             Owners.push(o);
@@ -104,7 +238,7 @@ contract Services{
     //checkOwner function is to make sure that id and address aren't begin used more then one time
     //@param unit _ownerId is the id begin check
     //@param address _addr is the address begin check 
-    //@returns string and bool, return true if not begin used, and false if are already used
+    //@returns bool, return true if not begin used, and false if are already used
     function checkOwner(uint _ownerId, address _addr) public view returns(bool){
 
         //check if Owners[] holds something
@@ -153,14 +287,14 @@ contract Services{
     //@param unit _ticket is the number of tickets in a game, it start on 0
     //@param int _price is the price of a ticket
     //@return true if function was successful
-    function createGame(uint _gameId, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public returns(bool){
+    function createGame(uint _gameId, uint _evnetOrganizerId, string memory _homeTeam, string memory _foreignTeam, uint _tickets, int _price ) public returns(bool){
         if(checkGame(_gameId) == false){
             return (false);
         } else{
-            game memory g = game(_gameId, _homeTeam, _foreignTeam, _tickets, GameStates.notStarted);       //Create a temporary memory of struct game
+            game memory g = game(_gameId, _evnetOrganizerId, _homeTeam, _foreignTeam, _tickets, GameStates.notStarted);       //Create a temporary memory of struct game
             Games.push(g);
        
-            emit CreateGame(_gameId, _homeTeam, _foreignTeam, _tickets);            //Emit an event on success 
+            emit CreateGame(_gameId,_evnetOrganizerId, _homeTeam, _foreignTeam, _tickets, GameStates.notStarted);            //Emit an event on success 
 
             createTicket(_gameId, _tickets, _price);                                //call the function createTicket for creating the tickets in a game
 
@@ -251,10 +385,11 @@ contract Services{
     //getGame function is to get all the information to a game
     //@param uint _gameId is the id of a game
     //@return gameId, homeTeam, foreignTeam, number of ticket and gameState
-    function getGame(uint _gameId) public view returns(uint, string memory, string memory, uint, GameStates state){
+    function getGame(uint _gameId) public view returns(uint, uint, string memory, string memory, uint, GameStates state){
         uint pos =findPosGame(_gameId);
 
         return(Games[pos].game_id,
+        Games[pos].evnetOrganizer_id,
         Games[pos].homeTeam,
         Games[pos].foreignTeam,
         Games[pos].number_of_tickets,
@@ -408,6 +543,8 @@ contract Services{
 
             Games[pos].gameState = GameStates.ongoing;
 
+            emit GameSate(Games[pos].game_id, Games[pos].evnetOrganizer_id, Games[pos].homeTeam, Games[pos].foreignTeam, Games[pos].gameState );
+
             return (true);
         }
         return (false);
@@ -422,6 +559,8 @@ contract Services{
         if(Games[pos].gameState == GameStates.ongoing){
 
             Games[pos].gameState = GameStates.ended;
+
+            emit GameSate(Games[pos].game_id, Games[pos].evnetOrganizer_id, Games[pos].homeTeam, Games[pos].foreignTeam, Games[pos].gameState );
 
             return (true);
         }

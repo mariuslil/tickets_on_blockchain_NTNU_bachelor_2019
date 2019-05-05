@@ -1,4 +1,4 @@
-//The script is for create games
+//The script is for create event Organizer 
 
 module.exports = function (callback) {
     const TruffleContract = require("truffle-contract");
@@ -13,18 +13,18 @@ module.exports = function (callback) {
         contract.deployed().then(function (instance) {
             billet = instance;
 
-            var a = billet.createGame(14, 27, "Phonix", "New york", 44, 125, { from: account[0], to: account[0] });
-            console.log("Create game");
-            a.then(function (g) {
-                console.log(g);
+            var event1 = billet.createEventOrganizer("Event Organizer 1", account[0], 27, { from: account[0], to: account[0] });
+            console.log("createEventOrganizer Organizer 27");
+            event1.then(function (Organizer) {
+                console.log("Organizer 27: ", Organizer)
             }).catch(function (e) {
                 console.log(e);
             });
 
-            var a2 = billet.createGame(17, 34, "Amazone", "Liverpool", 56, 100, { from: account[1], to: account[1] });
-            console.log("Create game 2");
-            a2.then(function (g2) {
-                console.log(g2);
+            var event2 = billet.createEventOrganizer("Event Organizer 2", account[1], 34, { from: account[1], to: account[1] });
+            console.log("createEventOrganizer Organizer 34");
+            event2.then(function (Organizer) {
+                console.log("Organizer 34: ", Organizer)
             }).catch(function (e) {
                 console.log(e);
             });
@@ -33,4 +33,3 @@ module.exports = function (callback) {
     console.log("test");
     callback();
 }
-

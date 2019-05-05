@@ -26,12 +26,39 @@ h2{
   background-color:black;
   width: 100%;
   bottom: 0;
+  margin-bottom: 30px;
+}
+
+
+.main{
+  margin-bottom: 30px;
+}
+
+h1{
+    float: center;
+    text-align: center;
+    font-size: 3em;
+    text-decoration: none;
+}
+
+h1 a{
+    text-decoration: none;
+    color:black;
+}
+
+.text{
+    float: center;
+    text-align: center;
+    font-size: 20px;
+    margin: 15px;
 }
 
 .menubar a {
   float: left;
   display: block;
   color: white;
+  margin: 0px;
+  background-color: black;
   text-align: center;
   padding: 10px 15px;
   text-decoration: none;
@@ -44,4 +71,16 @@ h2{
 .menubar a:visited{
     color: white;
     text-decoration: none;
+}
+
+.style{
+    margin: auto;
+    display: block;
+    padding: 5px;
+    text-align: center;
+    float: center;
+    font-size:  15px;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: Arial;
 }

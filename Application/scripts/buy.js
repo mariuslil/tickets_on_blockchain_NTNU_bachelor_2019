@@ -1,11 +1,8 @@
-//the script is for a owner to buy a ticket
+//The script function is to let a user buy tickets from a game
 
 module.exports = function (callback) {
     const TruffleContract = require("truffle-contract");
     const contract = TruffleContract(require("../build/contracts/Services.json"));
-
-    //["BigNumber", "BN", "String"].
-    //contract.numberFormat = 'String';
 
     contract.setProvider(web3.currentProvider);
     web3.eth.getAccounts().then(function (account) {
@@ -13,39 +10,38 @@ module.exports = function (callback) {
         contract.deployed().then(function (instance) {
             billet = instance;
 
-            var b = billet.buyTickets(13, 14, 10, { from: account[2], to: account[0] });
-            console.log("Owner 13 Buy ticket for game 14");
-            b.then(function (bought) {
-                console.log("Owner 13,Tickets 14: ", bought);
+            var buys1 = billet.buyTickets(13, 14, 10, { from: account[2], to: account[0] });
+            console.log("buyTickets(13, 14, 10)");
+            buys1.then(function (bought1) {
+                console.log("User 13, Tickets 14: ", bought1);
             }).catch(function (e) {
                 console.log(e);
             });
 
-            var b_1 = billet.buyTickets(13, 17, 10, { from: account[2], to: account[1] });
-            console.log("Owner 13 Buy ticket for game 17");
-            b_1.then(function (bought_1) {
-                console.log("Owner 13, Tickets 17: ", bought_1);
+            var buys2 = billet.buyTickets(13, 17, 10, { from: account[2], to: account[1] });
+            console.log("buyTickets(13, 17, 10)");
+            buys2.then(function (bought2) {
+                console.log("User 13, Tickets 17: ", bought2);
             }).catch(function (e) {
                 console.log(e);
             });
 
-            var b2 = billet.buyTickets(26, 17, 5, { from: account[3], to: account[1] });
-            console.log("Owner 26 Buy ticket for game 17");
-            b2.then(function (bought2) {
-                console.log("Owner 26, Ticket 17:", bought2);
+            var buys3 = billet.buyTickets(26, 17, 5, { from: account[3], to: account[1] });
+            console.log("buyTickets(26, 17, 5)");
+            buys3.then(function (bought3) {
+                console.log("User 26, Ticket 17:", bought3);
             }).catch(function (e) {
                 console.log(e);
             });
 
-            var b3 = billet.buyTickets(2, 14, 7, { from: account[4], to: account[0] });
-            console.log("Owner 2 Buy ticket for game 14");
-            b3.then(function (bought3) {
-                console.log("Owner 2, Ticket 14: ", bought3);
+            var buys4 = billet.buyTickets(2, 14, 7, { from: account[4], to: account[0] });
+            console.log("buyTickets(2, 14, 7)");
+            buys4.then(function (bought4) {
+                console.log("User 2, Ticket 14: ", bought4);
             }).catch(function (e) {
                 console.log(e);
             });
         });
     });
-    console.log("test");
     callback();
 }

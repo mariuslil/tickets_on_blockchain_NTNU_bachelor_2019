@@ -439,7 +439,7 @@ contract Services{
     //buyTicket let a user buy several tickets in game
     //@param uint _userId is the id of the user
     //@param uint _gameId is the the id of game the user want buy ticket
-    //@return bool, true if ticket wa bought, false if no ticket available
+    //@return bool, true if ticket was buyed, false if no ticket available
     function buyTickets(uint _userId, uint _gameId, uint _tickets) public returns(bool){
         uint posG = findPosGame(_gameId);
         uint posU = findPosUser(_userId);

@@ -13,7 +13,7 @@ contract Services{
         uint user_id;
         //the id of game to the ticket
         uint game_id;
-        //the price of the ticket, inn kr
+        //the price of the ticket, in kr
         int price;
         //What state the ticket is in
         States state;

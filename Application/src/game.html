@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/app.css">
+    <title> game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+    <div class="header">
+        <img src="img/InnitLogo.png" float="left">
+        <a href="index.html">Prototype</a>
+    </div>
+
+    <div class="menubar">
+        <a href="game.html">Game</a>
+        <a href="User.html">User</a>
+        <a href="EventOrganizer.html">Event organizer</a>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 mb-1">
+                <h3>Create game</h3>
+                <div class="form-group">
+                    <label for="gameID"> Game ID:</label></br>
+                    <input type="text" class="form-group" id="gameID">
+                </div>
+                <div class="form-group">
+                    <label for="eventOrganizerID"> Event Organizer ID: </label></br>
+                    <input type="text" class="form-group" id="eventOrganizerID">
+                </div>
+                <div class="form-group">
+                    <label for="homeTeamID"> Home team: </label></br>
+                    <input type="text" class="form-group" id="homeTeamID">
+                </div>
+                <div class="form-group">
+                    <label for="awayTeamID"> Away Team: </label></br>
+                    <input type="text" class="form-group" id="awayTeamID">
+                </div>
+                <div class="form-group">
+                    <label for="tickets"> how many tickets: </label></br>
+                    <input type="text" class="form-group" id="ticket">
+                </div>
+                <button type="button" class="btn btn-primary btn-md">Create</button>
+            </div>
+            <div class="col-md-3">
+                <h3>Change game</h3>
+                <div class="form-group">
+                    <label for="gameID"> Game ID: </label></br>
+                    <input type="text" class="form-group" id="gameID">
+                </div>
+                <div class="form-group">
+                    <label for="gameState"> Game State: </label></br>
+                    <select class="form-control" id="GameSate">
+                        <option>Ongoing</option>
+                        <option>Ended</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary btn-md">Change</button>
+            </div>
+            <div class="col-md-3">
+                <h3>Buy ticket</h3>
+                <div class="form-group">
+                    <label for="gameID"> Game ID: </label></br>
+                    <input type="text" class="form-group" id="gameID">
+                </div>
+                <div class="form-group">
+                    <label for="tickets"> Tickets: </label></br>
+                    <input type="text" class="form-group" id="tickets">
+                </div>
+                <button type="button" class="btn btn-primary btn-md">Buy</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js">
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }
+
+    </script>
+</body>
+
+</html>

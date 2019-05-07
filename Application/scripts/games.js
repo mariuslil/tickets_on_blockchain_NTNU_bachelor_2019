@@ -10,8 +10,8 @@ module.exports = function (callback) {
         contract.deployed().then(function (instance) {
             billet = instance;
 
-            var game1 = billet.createGame(14, 27, "New york", "Rosenborg", 56, 100, { from: account[0], to: account[0] });
-            console.log("createGame(14, 27, New york, Rosenborg, 56, 100)");
+            var game1 = billet.createGame(14, 27, "New york", "Rosenborg", 20, 100, { from: account[0], to: account[0] });
+            console.log("createGame(14, 27, New york, Rosenborg, 20, 100)");
             game1.then(function (Game1) {
                 console.log(Game1);
             }).catch(function (e) {

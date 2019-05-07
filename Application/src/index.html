@@ -4,16 +4,36 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="css/app.css">
-    <title> Ticket system</title>
+    <title> homepage</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 
 <body>
-    <h1>Prototype</h1>
-    <div class="menubar">
-        <a href="createGame.html">Create Game</a>
-        <a href="createOwner.html">Create Owner</a>
-        <a href="buyTicket.html">Buy Ticket</a>
+
+    <div class="header">
+        <img src="img/InnitLogo.png" float="left">
+        <a href="index.html">Prototype</a>
     </div>
+
+    <div class="menubar">
+        <a href="game.html">Game</a>
+        <a href="User.html">User</a>
+        <a href="EventOrganizer.html">Event organizer</a>
+    </div>
+
+    <script type="text/javascript">
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+            //web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }
+    </script>
 </body>
 
 </html>

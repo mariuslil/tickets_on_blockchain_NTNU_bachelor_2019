@@ -13,7 +13,7 @@ contract Services{
         uint user_id;
         //the id of game to the ticket
         uint game_id;
-        //the price of the ticket, in kr
+        //the price of the ticket, inn kr
         int price;
         //What state the ticket is in
         States state;
@@ -106,7 +106,7 @@ contract Services{
     function createEventOrganizer(string memory _name, address _addr, uint _evnetOrganizerId) public returns(bool){
 
         //check if event organizer already exits
-        if(checkEventOrganizer(_addr, _evnetOrganizerId)){
+        if(checkEventOrganizer(_evnetOrganizerId) && checkAddr(_addr)){
             eventOrganizer memory e = eventOrganizer(_evnetOrganizerId, _name, _addr);      //Create a temporary memory of struct eventOrganizer
             EventOrganizers.push(e);
 
@@ -123,16 +123,16 @@ contract Services{
     //checkEventOrganizer function makes sure that address aren't begin used more then one time
     //@param address _addr is the address begin check
     //@returns bool, return true if not begin used, and false if are already used
-    function checkEventOrganizer(address _addr, uint _evnetOrganizerId)public view returns(bool){
+    function checkEventOrganizer(uint _evnetOrganizerId)public view returns(bool){
 
         //check if EventOrganizers[] hold something
-        if(getCounterEventOrganizer() != 0 && checkAddr(_addr)){
+        if(getCounterEventOrganizer() != 0){
 
             //go throught all EventOrganizers
             for(uint i = 0; i < getCounterEventOrganizer(); i ++){
 
                 //check if the address is used
-                if(EventOrganizers[i].addr == _addr && EventOrganizers[i].evnetOrganizer_id == _evnetOrganizerId){
+                if(EventOrganizers[i].evnetOrganizer_id == _evnetOrganizerId){
 
                     return(false);
                 }
@@ -220,7 +220,7 @@ contract Services{
     function createUser(uint _userId, string memory _name, address _addr, int _mobile) public returns(bool){
 
         //call the function checkUser to check _userId and _addr
-        if(checkUser(_userId, _addr)){
+        if(checkUser(_userId) && checkAddr(_addr)){
 
             user memory u = user(_userId, _name, _addr, _mobile, 0);      //Create a temporary memory of struct user
             Users.push(u);
@@ -240,16 +240,16 @@ contract Services{
     //@param unit _userId is the id begin check
     //@param address _addr is the address begin check
     //@returns bool, return true if not begin used, and false if are already used
-    function checkUser(uint _userId, address _addr) public view returns(bool){
+    function checkUser(uint _userId) public view returns(bool){
 
         //check if Users[] holds something
-        if(getCounterUsers() != 0 && checkAddr(_addr)){
+        if(getCounterUsers() != 0){
 
             //check every Users[]
             for(uint i = 0; i < getCounterUsers(); i++){
 
                 //if userId is the same
-                if(Users[i].user_id == _userId && Users[i].addr == _addr){
+                if(Users[i].user_id == _userId){
 
                     return (false);
                 }
@@ -291,8 +291,8 @@ contract Services{
     function createGame(uint _gameId, uint _evnetOrganizerId, string memory _homeTeam,
     string memory _foreignTeam, uint _tickets, int _price)public returns(bool){
 
-        //check if game already exists
-        if(checkGame(_gameId)){
+        //check if game already exists and event organizer exists
+        if(!checkEventOrganizer(_evnetOrganizerId) && checkGame(_gameId)){
 
             game memory g = game(_gameId, _evnetOrganizerId, _homeTeam, _foreignTeam, _tickets, GameStates.notStarted);       //Create a temporary memory of struct game
             Games.push(g);
@@ -421,19 +421,37 @@ contract Services{
         return (counter);
     }
 
-    //findPosAvailable find the first ticket available
-    //@param uint _gameId is the the id of game the user want buy ticket
-    //@return uint of the position to first ticket Available
-    function findPosAvailable(uint _posG) public view returns(uint) {
 
-        //go thorught all ticket in a Gmes[]
+    //buy functio is go through all ticket in game and sett user to a tciket (let user buy it)
+    //@param uint _posU is the position of the user
+    //@param uint _posG is the position of the game
+    //@return bool, true if a ticket was successfull bought, false if no ticket available
+    function buy(uint _posU, uint _posG)public returns(bool){
+        uint posT = Users[_posU].ticketOwns;
+
+        //go throught very ticket in the game
         for(uint i = 0; i < Games[_posG].number_of_tickets; i++){
 
-            //check if the ticket is available
+            //check if the ticket are available
             if(Games[_posG].tickets[i].state == States.available){
-                return (i);
+
+                Games[_posG].tickets[i].user_id = Users[_posU].user_id;       //Sett the user id
+
+                Games[_posG].tickets[i].state = States.bought;               //change the state to bought
+
+                Users[_posU].tickets[posT] = Games[_posG].tickets[i];         //cop ticket to Users[].tickets[]
+
+                emit BuyTicket(Users[_posU].user_id,
+                Users[_posU].tickets[posT].game_id,
+                posT, Users[_posU].tickets[posT].price,
+                Users[_posU].tickets[posT].state);
+
+                Users[_posU].ticketOwns++;
+
+                return (true);
             }
         }
+        return (false);
     }
 
     //buyTicket let a user buy several tickets in game
@@ -443,28 +461,16 @@ contract Services{
     function buyTickets(uint _userId, uint _gameId, uint _tickets) public returns(bool){
         uint posG = findPosGame(_gameId);
         uint posU = findPosUser(_userId);
-        uint posT = Users[posU].ticketOwns;
+
 
         //check if there any ticket available
         if(getTicketAvailable(_gameId) != 0){
 
-            //go throught buy number of ticket user wish to buy
+            //go throught number of ticket user wish to buy
             for(uint i = 0; i < _tickets; i++){
 
-                uint x = findPosAvailable(posG);                            //find the position of the availble ticket
-
-                Games[posG].tickets[x].user_id = Users[posU].user_id;       //Sett the user id
-
-                Games[posG].tickets[x].state = States.bought;               //change the state to bought
-
-                Users[posU].tickets[posT] = Games[posG].tickets[i];         //cop ticket to Users[].tickets[]
-
-                emit BuyTicket(Users[posU].user_id,
-                Users[posU].tickets[posT].game_id,
-                posT, Users[posU].tickets[posT].price,
-                Users[posU].tickets[posT].state);
-
-                Users[posU].ticketOwns++;
+                buy(posU, posG);
+            
                 }
 
                 emit BuyTickets(_userId, _gameId, _tickets);
@@ -500,22 +506,6 @@ contract Services{
         Users[pos].tickets[_ticket].state);
     }
 
-    //checkTicket function check which game ticket is used for
-    //@param uint _pos is the position to a user in Users[]
-    //@param uint _gameId is the id of a game
-    //@param uint _tickets is the function check for
-    //@return bool, true if ticket belong to gameId, false if ticket dont belong
-    function checkTicket(uint _pos, uint _gameId, uint _tickets) public view returns(bool){
-
-        //check ticket gameId
-        if(Users[_pos].tickets[_tickets].game_id == _gameId){
-
-            return (true);
-
-        } else {
-            return (false);
-        }
-    }
 
     //getTicketsOwn function check how many tickets user owns to a game
     //@param uint _userId is the id of a user
@@ -576,19 +566,19 @@ contract Services{
     //@return bool, true if ticket was successfull vaildate and change state spent, false if failed
     function vaildateTicket(uint _userId, uint _gameId) public returns(bool){
         uint posG = findPosGame(_gameId);
-        uint posO = findPosUser(_userId);
+        uint posU = findPosUser(_userId);
 
         if(!checkGame(_gameId) && Games[posG].gameState == GameStates.ongoing){
-            for(uint i = 0; i < Users[posO].ticketOwns; i++){
-                if(checkTicket(posO, i, _gameId) && Users[posO].tickets[i].state == States.bought){
+            for(uint i = 0; i < Users[posU].ticketOwns; i++){
+                if(Users[posU].tickets[i].game_id == _gameId && Users[posU].tickets[i].state == States.bought){
 
-                uint tickPos = Users[posO].tickets[i].ticketPos;
+                uint tickPos = Users[posU].tickets[i].ticketPos;
                 
                 Games[posG].tickets[tickPos].state = States.spent;                           //change state to spent
 
-                Users[posO].tickets[i] = Games[posG].tickets[tickPos];            //copy the ticket info to Games[]
+                Users[posU].tickets[i] = Games[posG].tickets[tickPos];            //copy the ticket info to Games[]
 
-                emit TicketState(_userId, _gameId, i, Users[posO].tickets[i].state);
+                emit TicketState(_userId, _gameId, i, Users[posU].tickets[i].state);
 
                 }
             }
@@ -606,20 +596,20 @@ contract Services{
     //@return bool, true if ticket was successfull vaildate and change state invaild, false if failed
     function invaildTicket(uint _userId, uint _gameId) public returns(bool){
         uint posG = findPosGame(_gameId);
-        uint posO = findPosUser(_userId);
+        uint posU = findPosUser(_userId);
 
         if(!checkGame(_gameId)){
-            for(uint i = 0; i < Users[posO].ticketOwns; i++){
-                if(checkTicket(posO, i, _gameId) && Users[posO].tickets[i].state == States.spent){
+            for(uint i = 0; i < Users[posU].ticketOwns; i++){
+                if(Users[posU].tickets[i].game_id == _gameId && Users[posU].tickets[i].state == States.spent){
 
-                uint tickPos = Users[posO].tickets[i].ticketPos;
+                uint tickPos = Users[posU].tickets[i].ticketPos;
 
                 Games[posG].tickets[tickPos].state = States.invaild;                           //change state to bought
 
 
-                Users[posO].tickets[i] = Games[posG].tickets[tickPos];                //copy the ticket info to Games[]
+                Users[posU].tickets[i] = Games[posU].tickets[tickPos];                //copy the ticket info to Games[]
 
-                emit TicketState(_userId, _gameId, i, Users[posO].tickets[i].state);
+                emit TicketState(_userId, _gameId, i, Users[posU].tickets[i].state);
 
                 }
             }

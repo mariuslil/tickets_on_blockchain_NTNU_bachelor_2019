@@ -588,26 +588,23 @@ contract Services{
 
     }
 
-
-    //vaildateTicket function changes the state of å ticket to invaild
+    //invaildTicket function changes the state of å ticket to spent
     //@param uint _userId is the id of a user
-    //@param uint _ticket is the used ticket
     //@param uint _gameId is the id of a game
-    //@return bool, true if ticket was successfull vaildate and change state invaild, false if failed
-    function invaildTicket(uint _userId, uint _gameId) public returns(bool){
+    //@return bool, true if ticket was successfull invalid and change state invalid, false if failed
+    function invalidTicket(uint _userId, uint _gameId) public returns(bool){
         uint posG = findPosGame(_gameId);
         uint posU = findPosUser(_userId);
 
         if(!checkGame(_gameId)){
             for(uint i = 0; i < Users[posU].ticketOwns; i++){
-                if(Users[posU].tickets[i].game_id == _gameId && Users[posU].tickets[i].state == States.spent){
+                if(Users[posU].tickets[i].game_id == _gameId){
 
                 uint tickPos = Users[posU].tickets[i].ticketPos;
+                
+                Games[posG].tickets[tickPos].state = States.invaild;                           //change state to invalid
 
-                Games[posG].tickets[tickPos].state = States.invaild;                           //change state to bought
-
-
-                Users[posU].tickets[i] = Games[posU].tickets[tickPos];                //copy the ticket info to Games[]
+                Users[posU].tickets[i] = Games[posG].tickets[tickPos];            //copy the ticket info to Games[]
 
                 emit TicketState(_userId, _gameId, i, Users[posU].tickets[i].state);
 
@@ -615,6 +612,7 @@ contract Services{
             }
             return (true);
         }
-         return (false);
+         return (false);                                                                 //return false
+
     }
 }

@@ -391,7 +391,7 @@ contract Services{
 
     //getGame function gets all the information to a game
     //@param uint _gameId is the id of a game
-    //@return gameId, homeTeam, foreignTeam, number of ticket and gameState
+    //@return gameId, eventOrganizersId, homeTeam, foreignTeam, number of ticket and gameState
     function getGame(uint _gameId) public view returns(uint, uint, string memory, string memory, uint, GameStates state){
         uint pos = findPosGame(_gameId);
 
@@ -401,6 +401,54 @@ contract Services{
         Games[pos].foreignTeam,
         Games[pos].number_of_tickets,
         Games[pos].gameState);
+    }
+
+    //getEventOrganizerGame function gets all the information about game to evnt organizer
+    //@param uint _eventOrganizerId is the id of a event organizer
+    //@param uint _gameId is the id of a game
+    //@return eventOrganizersId, name, gameId, homeTeam, foreignTeam, number of ticket and gameState
+    function getEventOrganizerGame(uint _eventOrganizerId, uint _gameId) public view returns
+    (uint,string memory, uint, string memory, string memory, uint, GameStates state){
+        uint posG = findPosGame(_gameId);
+        uint posU = findPosEventOrganizer(_eventOrganizerId);
+        
+        if(EventOrganizers[posU].evnetOrganizer_id == Games[posG].evnetOrganizer_id){
+            return(EventOrganizers[posU].evnetOrganizer_id,
+            EventOrganizers[posU].name,
+            Games[posG].game_id,
+            Games[posG].homeTeam,
+            Games[posG].foreignTeam,
+            Games[posG].number_of_tickets,
+            Games[posG].gameState);
+        }
+    }
+
+    //countEventOrganizerGame function count how many game a evnet organizer is organizing
+    //@param uint _eventOrganizerId is the id of a event organizer
+    //@param uint _gameId is the id of a game
+    //@return uint of many many game a event organizer is organizing
+    function countEventOrganizerGame(uint _eventOrganizerId) public view returns(uint){
+        uint posU = findPosEventOrganizer(_eventOrganizerId);
+        uint counter = 0;
+
+        for(uint i = 0; i < getCountGame(); i++){
+
+            if(EventOrganizers[posU].evnetOrganizer_id == Games[i].evnetOrganizer_id){
+                counter++;
+            }
+        }
+        return(counter);
+    }
+
+    //getEventOrganizerAddr get the ethereum address to a event organizer
+    //@param uint _evnetOrganizerId is the id of event organizer
+    //@return address to event organizer
+    function getEventOrganizerAddr(uint _eventOrganizerId) public view returns(address){
+       uint posU = findPosEventOrganizer(_eventOrganizerId);
+       
+       if(EventOrganizers[posU].evnetOrganizer_id == _eventOrganizerId){
+           return(EventOrganizers[posU].addr);
+       }
     }
 
     //getTicketAvailable gets number of tickets available in a game
@@ -421,6 +469,31 @@ contract Services{
         return (counter);
     }
 
+    //buyTicket let a user buy several tickets in game
+    //@param uint _userId is the id of the user
+    //@param uint _gameId is the the id of game the user want buy ticket
+    //@return bool, true if ticket was buyed, false if no ticket available
+    function buyTickets(uint _userId, uint _gameId, uint _tickets) public returns(bool){
+        uint posG = findPosGame(_gameId);
+        uint posU = findPosUser(_userId);
+
+
+        //check if there any ticket available
+        if(getTicketAvailable(_gameId) >= _tickets){
+
+            //go throught number of ticket user wish to buy
+            for(uint i = 0; i < _tickets; i++){
+
+                buy(posU, posG);
+            
+                }
+
+                emit BuyTickets(_userId, _gameId, _tickets);
+
+                return(true);
+        }
+        return (false);
+    }
 
     //buy functio is go through all ticket in game and sett user to a tciket (let user buy it)
     //@param uint _posU is the position of the user
@@ -450,32 +523,6 @@ contract Services{
 
                 return (true);
             }
-        }
-        return (false);
-    }
-
-    //buyTicket let a user buy several tickets in game
-    //@param uint _userId is the id of the user
-    //@param uint _gameId is the the id of game the user want buy ticket
-    //@return bool, true if ticket was buyed, false if no ticket available
-    function buyTickets(uint _userId, uint _gameId, uint _tickets) public returns(bool){
-        uint posG = findPosGame(_gameId);
-        uint posU = findPosUser(_userId);
-
-
-        //check if there any ticket available
-        if(getTicketAvailable(_gameId) != 0){
-
-            //go throught number of ticket user wish to buy
-            for(uint i = 0; i < _tickets; i++){
-
-                buy(posU, posG);
-            
-                }
-
-                emit BuyTickets(_userId, _gameId, _tickets);
-
-                return(true);
         }
         return (false);
     }

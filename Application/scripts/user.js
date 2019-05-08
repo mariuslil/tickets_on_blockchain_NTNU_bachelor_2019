@@ -27,7 +27,7 @@ module.exports = function (callback) {
             });
 
             var user3 = billet.createUser(2, "Ole Bjørn Gran", account[4], 53524231, { from: account[4], to: account[4] });
-            console.log("CreateUser(2,Ole Bjørn Gran, account[2], 53524231)");
+            console.log("CreateUser(2, Ole Bjørn Gran, account[2], 53524231)");
             user3.then(function (User2) {
                 console.log("User: ", User2);
             }).catch(function (e) {

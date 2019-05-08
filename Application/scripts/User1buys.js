@@ -25,22 +25,6 @@ module.exports = function (callback) {
             }).catch(function (e) {
                 console.log(e);
             });
-
-            var buys3 = billet.buyTickets(26, 17, 5, { from: account[3], to: account[0] });
-            console.log("buyTickets(26, 17, 10)");
-            buys3.then(function (bought3) {
-                console.log("User 13, Tickets 17: ", bought3);
-            }).catch(function (e) {
-                console.log(e);
-            });
-
-            var buys4 = billet.buyTickets(2, 14, 3, { from: account[2], to: account[0] });
-            console.log("buyTickets(2, 14, 10)");
-            buys4.then(function (bought4) {
-                console.log("User 2, Tickets 14: ", bought1);
-            }).catch(function (e) {
-                console.log(e);
-            });
         });
     });
     callback();

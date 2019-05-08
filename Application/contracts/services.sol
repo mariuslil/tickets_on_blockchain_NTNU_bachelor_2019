@@ -512,7 +512,7 @@ contract Services{
 
                 Games[_posG].tickets[i].state = States.bought;               //change the state to bought
 
-                Users[_posU].tickets[posT] = Games[_posG].tickets[i];         //cop ticket to Users[].tickets[]
+                Users[_posU].tickets[posT] = Games[_posG].tickets[i];         //copy ticket to Users[].tickets[]
 
                 emit BuyTicket(Users[_posU].user_id,
                 Users[_posU].tickets[posT].game_id,
@@ -662,4 +662,5 @@ contract Services{
          return (false);                                                                 //return false
 
     }
+    
 }

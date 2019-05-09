@@ -20,7 +20,7 @@
 
     <div class="menubar">
         <a href="game.html">Game</a>
-        <a href="User.html">User</a>
+        <a href="user.html">User</a>
         <a href="EventOrganizer.html">Event organizer</a>
     </div>
 
@@ -43,7 +43,7 @@
                 <button type="button" class="btn btn-primary btn-md" id="createUser">Create</button>
             </div>
             <div class="col-md-3 mb-1">
-                <h3>Getuser</h3>
+                <h3>Get user</h3>
                 <div class="form-group">
                     <label for="getUserID"> User ID:</label></br>
                     <input type="text" class="form-group" id="getUserID">
@@ -69,22 +69,22 @@
             <div class="col-md-3 mb-1">
                 <h3>User tickets</h3>
                 <div class="form-group">
-                    <label for="ownerID"> User ID:</label></br>
-                    <input type="text" class="form-group" id="ownerID">
+                    <label for="getTicketUserID"> User ID:</label></br>
+                    <input type="text" class="form-group" id="getTicketUserID">
                 </div>
                 <div class="form-group">
-                    <label for="name"> Full name:</label></br>
-                    <input type="text" class="form-group" id="name">
+                    <label for="getTicketPos"> Ticket:</label></br>
+                    <input type="text" class="form-group" id="getTicketPos">
+                </div>
+                <button type="button" class="btn btn-primary btn-md" id="getUserTickets">Finished</button>
+                <div class="form-group">
+                    <label for="getGameID"> Game ID:</label></br>
+                    <input type="text" class="form-group" id="getGameID">
                 </div>
                 <div class="form-group">
-                    <label for="addr"> Address:</label></br>
-                    <input type="text" class="form-group" id="addr">
+                    <label for="getState"> State:</label></br>
+                    <input type="text" class="form-group" id="getState">
                 </div>
-                <div class="form-group">
-                    <label for="mobile"> Mobile:</label></br>
-                    <input type="text" class="form-group" id="mobile">
-                </div>
-                <button type="button" class="btn btn-primary btn-md">Create</button>
             </div>
         </div>
     </div>
@@ -153,13 +153,45 @@
         }
 
         $("#getUser").click(function () {
-            getUser(("#getUserID").val()).then(function (result) {
+            var _userID = $("#getUserID").val();
+            console.log(_userID);
+            getUser(_userID).then(function (result) {
                 $("#getName").val(result[1]);
                 $("#getAddr").val(result[2]);
                 $("#getMobile").val(result[3]);
                 $("#getTickets").val(result[4]);
             })
         })
+
+        function getUserTickets(_userId, _ticketPos) {
+            return Services.methods.getUser_ticket(_userId, _ticketPos).call();
+        }
+
+        $("#getUserTickets").click(function () {
+            var _userId = $("#getTicketUserID").val();
+            var _ticketPos = $("#getTicketPos").val();
+            getUserTickets(_userId, _ticketPos).then(function (result) {
+                $("#getGameID").val(result[3]);
+                switch (result[4].toString()) {
+                    case "0":
+                        $("#getState").val("ERROR");
+                        break;
+
+                    case "1":
+                        $("#getState").val("Bought");
+                        break;
+
+                    case "2":
+                        $("#getState").val("spent");
+                        break;
+
+                    case "4":
+                        $("#getState").val("Invaild");
+                        break;
+
+                }
+            });
+        });
     </script>
 </body>
 

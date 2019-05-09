@@ -22,6 +22,7 @@
         <a href="game.html">Game</a>
         <a href="user.html">User</a>
         <a href="EventOrganizer.html">Event organizer</a>
+        <a href="ticket.html">Ticket</a>
     </div>
 
     <div class="container">
@@ -30,15 +31,15 @@
                 <h3>Create user</h3>
                 <div class="form-group">
                     <label for="createUserID"> User ID:</label></br>
-                    <input type="text" class="form-group" id="createUserID">
+                    <input type="text" class="form-control" id="createUserID">
                 </div>
                 <div class="form-group">
                     <label for="createName"> Full name:</label></br>
-                    <input type="text" class="form-group" id="createName">
+                    <input type="text" class="form-control" id="createName">
                 </div>
                 <div class="form-group">
                     <label for="createMobile"> Mobile:</label></br>
-                    <input type="text" class="form-group" id="createMobile">
+                    <input type="text" class="form-control" id="createMobile">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="createUser">Create</button>
             </div>
@@ -46,44 +47,44 @@
                 <h3>Get user</h3>
                 <div class="form-group">
                     <label for="getUserID"> User ID:</label></br>
-                    <input type="text" class="form-group" id="getUserID">
+                    <input type="text" class="form-control" id="getUserID">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="getUser">Get</button>
                 <div class="form-group">
                     <label for="getName"> Name:</label></br>
-                    <input type="text" class="form-group" id="getName">
+                    <input type="text" class="form-control" id="getName">
                 </div>
                 <div class="form-group">
                     <label for="getAddr"> Address:</label></br>
-                    <input type="text" class="form-group" id="getAddr">
+                    <input type="text" class="form-control" id="getAddr">
                 </div>
                 <div class="form-group">
                     <label for="getMobile"> Mobile:</label></br>
-                    <input type="text" class="form-group" id="getMobile">
+                    <input type="text" class="form-control" id="getMobile">
                 </div>
                 <div class="form-group">
                     <label for="getTickets"> Tickets own:</label></br>
-                    <input type="text" class="form-group" id="getTickets">
+                    <input type="text" class="form-control" id="getTickets">
                 </div>
             </div>
             <div class="col-md-3 mb-1">
                 <h3>User tickets</h3>
                 <div class="form-group">
                     <label for="getTicketUserID"> User ID:</label></br>
-                    <input type="text" class="form-group" id="getTicketUserID">
+                    <input type="text" class="form-control" id="getTicketUserID">
                 </div>
                 <div class="form-group">
                     <label for="getTicketPos"> Ticket:</label></br>
-                    <input type="text" class="form-group" id="getTicketPos">
+                    <input type="text" class="form-control" id="getTicketPos">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="getUserTickets">Finished</button>
                 <div class="form-group">
                     <label for="getGameID"> Game ID:</label></br>
-                    <input type="text" class="form-group" id="getGameID">
+                    <input type="text" class="form-control" id="getGameID">
                 </div>
                 <div class="form-group">
                     <label for="getState"> State:</label></br>
-                    <input type="text" class="form-group" id="getState">
+                    <input type="text" class="form-control" id="getState">
                 </div>
             </div>
         </div>
@@ -108,6 +109,10 @@
             return Services.methods.checkAddr(_addr).call();
         }
 
+        function checkUsers(_userId) {
+            return Services.methods.checkUser(_userId).call();
+        }
+
         /*web3.eth.personal.getAccounts().then(function (accounts) {
             for (var i = 0; i < accounts.length; ++i) {
                 var x = 0;
@@ -125,23 +130,30 @@
         });*/
 
         $("#createUser").click(function () {
+            var _userId = $("#createUserID").val();
             web3.eth.personal.getAccounts().then(function (accounts) {
                 for (var i = 0; i < accounts.length; ++i) {
                     var x = 0;
-                    checkAddress(accounts[x]).then(function (test) {
-                        if (test == true) {
-                            createUser($("#createUserID").val(), $("#createName").val(), accounts[x], $("#createMobile").val())
-                                .then(function (error, result) {
-                                    if (!error) {
-                                        console.log(result);
-                                        result;
-                                    } else {
-                                        console.log(error);
-                                    }
-                                    x++;
-                                });
+                    checkAddress(accounts[x]).then(function (errorAccounts) {
+                        if (errorAccounts == true) {
+                            checkUsers(_userId).then(function (errorUser) {
+                                if (errorUser == true) {
+                                    createUser(_userId, $("#createName").val(), accounts[x], $("#createMobile").val())
+                                        .then(function (error, result) {
+                                            if (!error) {
+                                                console.log(result);
+                                                result;
+                                            } else {
+                                                console.log(error);
+                                            }
+                                            x++;
+                                        });
+                                } else {
+                                    alert("The id is already begin used");
+                                }
+                            });
                         } else {
-                            console.log("false");
+                            alert("No valided address");
                         }
                     });
                 }
@@ -155,13 +167,19 @@
         $("#getUser").click(function () {
             var _userID = $("#getUserID").val();
             console.log(_userID);
-            getUser(_userID).then(function (result) {
-                $("#getName").val(result[1]);
-                $("#getAddr").val(result[2]);
-                $("#getMobile").val(result[3]);
-                $("#getTickets").val(result[4]);
-            })
-        })
+            checkUsers(_userId).then(function (error) {
+                if (error == false) {
+                    getUser(_userID).then(function (result) {
+                        $("#getName").val(result[1]);
+                        $("#getAddr").val(result[2]);
+                        $("#getMobile").val(result[3]);
+                        $("#getTickets").val(result[4]);
+                    });
+                } else {
+                    alert("User dont exists");
+                }
+            });
+        });
 
         function getUserTickets(_userId, _ticketPos) {
             return Services.methods.getUser_ticket(_userId, _ticketPos).call();
@@ -170,25 +188,31 @@
         $("#getUserTickets").click(function () {
             var _userId = $("#getTicketUserID").val();
             var _ticketPos = $("#getTicketPos").val();
-            getUserTickets(_userId, _ticketPos).then(function (result) {
-                $("#getGameID").val(result[3]);
-                switch (result[4].toString()) {
-                    case "0":
-                        $("#getState").val("ERROR");
-                        break;
+            checkUsers(_userId).then(function (error) {
+                if (error == false) {
+                    getUserTickets(_userId, _ticketPos).then(function (result) {
+                        $("#getGameID").val(result[3]);
+                        switch (result[4].toString()) {
+                            case "0":
+                                $("#getState").val("ERROR");
+                                break;
 
-                    case "1":
-                        $("#getState").val("Bought");
-                        break;
+                            case "1":
+                                $("#getState").val("Bought");
+                                break;
 
-                    case "2":
-                        $("#getState").val("spent");
-                        break;
+                            case "2":
+                                $("#getState").val("spent");
+                                break;
 
-                    case "4":
-                        $("#getState").val("Invaild");
-                        break;
+                            case "4":
+                                $("#getState").val("Invaild");
+                                break;
 
+                        }
+                    });
+                } else {
+                    alert("User dont exists");
                 }
             });
         });

@@ -24,6 +24,7 @@
         <a href="game.html">Game</a>
         <a href="user.html">User</a>
         <a href="EventOrganizer.html">Event organizer</a>
+        <a href="ticket.html">Ticket</a>
     </div>
 
     <div class="container">
@@ -31,84 +32,70 @@
             <div class="col-md-3 mb-1">
                 <h3>Create game</h3>
                 <div class="form-group">
-                    <label for="createGameID"> Game ID:</label></br>
-                    <input type="number" class="form-group" id="createGameID">
+                    <label for="createGameID"> Game ID: </label></br>
+                    <input type="number" class="form-control" id="createGameID">
                 </div>
                 <div class="form-group">
-                    <label for="createEventOrganizerID"> Event Organizer ID: </label></br>
-                    <input type="text" class="form-group" id="createEventOrganizerID">
+                    <label for="createEventOrganizerID"> Event organizer ID: </label></br>
+                    <input type="number" class="form-control" id="createEventOrganizerID">
                 </div>
                 <div class="form-group">
                     <label for="createHomeTeam"> Home team: </label></br>
-                    <input type="text" class="form-group" id="createHomeTeam">
+                    <input type="text" class="form-control" id="createHomeTeam">
                 </div>
                 <div class="form-group">
                     <label for="createAwayTeam"> Away Team: </label></br>
-                    <input type="text" class="form-group" id="createAwayTeam">
+                    <input type="text" class="form-control" id="createAwayTeam">
                 </div>
                 <div class="form-group">
-                    <label for="creaeteTickets"> Tickets: </label></br>
-                    <input type="number" class="form-group" id="creaeteTickets">
+                    <label for="createTickets"> Tickets: </label></br>
+                    <input type="number" class="form-control" id="createTickets">
                 </div>
                 <div class="form-group">
                     <label for="createPrice"> Price: </label></br>
-                    <input type="number" class="form-group" id="createPrice">
+                    <input type="number" class="form-control" id="createPrice">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="creaeteGame">Create</button>
             </div>
             <div class="col-md-3">
-                <h3>Change game</h3>
+                <h3>Change status</h3>
                 <div class="form-group">
-                    <label for="gameID"> Game ID: </label></br>
-                    <input type="text" class="form-group" id="gameID">
+                    <label for="getChangeGameID"> Game ID: </label></br>
+                    <input type="number" class="form-control" id="getChangeGameID">
                 </div>
                 <div class="form-group">
-                    <label for="gameState"> Game State: </label></br>
-                    <select class="form-control" id="GameSate">
-                        <option>Ongoing</option>
-                        <option>Ended</option>
-                    </select>
+                    <label for="ChangeGameState"> Game status: </label></br>
+                    <input type="text" class="form-control" id="ChangeGameState">
                 </div>
-                <button type="button" class="btn btn-primary btn-md">Change</button>
+                <button type="button" class="btn btn-primary btn-md" id="changeGame">Change</button>
             </div>
-            <div class="col-md-3">
-                <h3>Buy ticket</h3>
-                <div class="form-group">
-                    <label for="gameID"> Game ID: </label></br>
-                    <input type="text" class="form-group" id="gameID">
-                </div>
-                <div class="form-group">
-                    <label for="tickets"> Tickets: </label></br>
-                    <input type="text" class="form-group" id="tickets">
-                </div>
-                <button type="button" class="btn btn-primary btn-md">Buy</button>
-            </div>
+
             <div class="col-md-3">
                 <h3>Get game</h3>
                 <div class="form-group">
                     <label for="getGameID"> Game ID: </label></br>
-                    <input type="number" class="form-group" id="getGameID">
+                    <input type="number" class="form-control" id="getGameID">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="getGame">Get</button>
                 <div class="form-group">
                     <label for="GetEventOrganizerID"> Event Organizer ID: </label></br>
-                    <input type="text" class="form-group" id="GetEventOrganizerID">
+                    <input type="text" class="form-control" id="GetEventOrganizerID">
                 </div>
                 <div class="form-group">
                     <label for="getHomeTeamID"> Home team: </label></br>
-                    <input type="text" class="form-group" id="getHomeTeamID">
+                    <input type="text" class="form-control" id="getHomeTeamID">
                 </div>
                 <div class="form-group">
                     <label for="getAwayTeamID"> Away Team: </label></br>
-                    <input type="text" class="form-group" id="getAwayTeamID">
+                    <input type="text" class="form-control" id="getAwayTeamID">
                 </div>
                 <div class="form-group">
                     <label for="getTickets"> Tickets: </label></br>
-                    <input type="number" class="form-group" id="getTickets">
+                    <input type="number" class="form-control" id="getTickets">
                 </div>
                 <div class="form-group">
                     <label for="getStatus"> Status: </label></br>
-                    <input type="text" class="form-group" id="getStatus">
+                    <input type="text" class="form-control" id="getStatus">
                 </div>
             </div>
         </div>
@@ -124,70 +111,110 @@
             web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
         }
 
-        var contract = new web3.eth.Contract(abi, address);
+        var Services = new web3.eth.Contract(abi, address);
 
 
 
         function getGame(gameId) {
-            return contract.methods.getGame(gameId).call();
+            return Services.methods.getGame(gameId).call();
         }
 
         function createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price) {
-            return contract.methods.createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price).call();
+            return Services.methods.createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price).call();
         }
 
-        function start() {
-            return contract.methods.gameStart().call();
+        function start(_gameId) {
+            return Services.methods.gameStart(_gameId).call();
         }
 
-        function ended() {
-
+        function ended(_gameId) {
+            return Services.methods.gameEnded(_gameId).call();
         }
 
-        function buy() {
-
+        function checkGames(_gameId) {
+            return Services.methods.checkGame(_gameId).call();
         }
 
         $("#creaeteGame").click(function () {
             var _gameId = $("#createGameID").val();
-            var _eventorganizerId = $("#createEventOrganizerID").val();
-            var _homeTeam = $("#createHomeTeam").val();
-            var _awayTeam = $("#createAwayTeam").val();
-            var _tickets = $("#creaeteTickets").val();
-            var _price = $("#createPrice").val();
-            createGame(_gameId, _eventorganizerId, _homeTeam, _awayTeam, _tickets, _price)
-                .then(function (error, result) {
-                    if (!error)
-                        console.log(JSON.stringify(result));
-                    else
-                        console.log(error);
+            checkGames(_gameId).then(function (error) {
+                if (error == true) {
+                    var _eventorganizerId = $("#createEventOrganizerID").val();
+                    var _homeTeam = $("#createHomeTeam").val();
+                    var _awayTeam = $("#createAwayTeam").val();
+                    var _tickets = $("#createTickets").val();
+                    var _price = $("#createPrice").val();
+                    createGame(_gameId, _eventorganizerId, _homeTeam, _awayTeam, _tickets, _price)
+                        .then(function (result) {
+                            console.log(result);
+                            result;
 
-                })
-        })
+                        });
+                } else {
+                    alert("This ID is already begin used");
+                }
+            });
+        });
+
+        $("#changeGame").click(function () {
+            var _gameId = $('#getChangeGameID').val();
+            var _state = $("#ChangeGameState").val();
+            checkGames(_gameId).then(function (error) {
+                if (error == false) {
+                    switch (_state) {
+                        case "Ongoing":
+                            start(_gameId).then(function (result) {
+                                console.log(result);
+                            });
+                            break;
+
+                        case "Ended":
+                            ended(_gameId).then(function (result) {
+                                console.log(result);
+                            });
+                            break;
+
+                        default:
+                            alert("Could not complete the change");
+                            break;
+                    }
+                } else {
+                    alert("Not valided game ID")
+                }
+            });
+        });
+
 
         $('#getGame').click(function () {
             var _gameId = $('#getGameID').val();
             console.log(_gameId);
-            getGame(_gameId).then(function (result) {
-                console.log("Game _gameId: " + JSON.stringify(result));
-                $("#GetEventOrganizerID").val(result[1]);
-                $("#getHomeTeamID").val(result[2]);
-                $("#getAwayTeamID").val(result[3]);
-                $("#getTickets").val(result[4]);
-                switch (result[6]) {                            //se på
-                    case 0:
-                        $("#getStatus").val("Not startet");
-                        break;
+            checkGames(_gameId).then(function (error) {
+                if (error == false) {
+                    getGame(_gameId).then(function (result) {
+                        console.log("Game _gameId: " + JSON.stringify(result));
+                        $("#GetEventOrganizerID").val(result[1]);
+                        $("#getHomeTeamID").val(result[2]);
+                        $("#getAwayTeamID").val(result[3]);
+                        $("#getTickets").val(result[4]);
+                        switch (result[5].toString()) {                            //se på
+                            case "0":
+                                $("#getStatus").val("Not startet");
+                                break;
 
-                    case 1:
-                        $("#getStatus").val("Ongoing");
-                        break;
+                            case "1":
+                                $("#getStatus").val("Ongoing");
+                                break;
 
-                    case 2:
-                        $("#getStatus").val("Ended");
-                        break;
+                            case "2":
+                                $("#getStatus").val("Ended");
+                                break;
 
+                        }
+                    });
+                } else {
+                    alert("Not valided game ID")
                 }
+
             });
         });
 

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js"></script>
+    <script src="js/abi.js"></script>
 </head>
 
 <body>
@@ -27,7 +29,47 @@
             <div class="col-md-3 mb-1">
                 <h3>Create user</h3>
                 <div class="form-group">
-                    <label for="ownerID"> Owner ID:</label></br>
+                    <label for="ownerID"> User ID:</label></br>
+                    <input type="text" class="form-group" id="ownerID">
+                </div>
+                <div class="form-group">
+                    <label for="name"> Full name:</label></br>
+                    <input type="text" class="form-group" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="addr"> Address:</label></br>
+                    <input type="text" class="form-group" id="addr">
+                </div>
+                <div class="form-group">
+                    <label for="mobile"> Mobile:</label></br>
+                    <input type="text" class="form-group" id="mobile">
+                </div>
+                <button type="button" class="btn btn-primary btn-md">Create</button>
+            </div>
+            <div class="col-md-3 mb-1">
+                <h3>Getuser</h3>
+                <div class="form-group">
+                    <label for="ownerID"> User ID:</label></br>
+                    <input type="text" class="form-group" id="ownerID">
+                </div>
+                <button type="button" class="btn btn-primary btn-md">Create</button>
+                <div class="form-group">
+                    <label for="name"> Name:</label></br>
+                    <input type="text" class="form-group" id="name">
+                </div>
+                <div class="form-group">
+                    <label for="addr"> Address:</label></br>
+                    <input type="text" class="form-group" id="addr">
+                </div>
+                <div class="form-group">
+                    <label for="mobile"> Mobile:</label></br>
+                    <input type="text" class="form-group" id="mobile">
+                </div>
+            </div>
+            <div class="col-md-3 mb-1">
+                <h3>User tickets</h3>
+                <div class="form-group">
+                    <label for="ownerID"> User ID:</label></br>
                     <input type="text" class="form-group" id="ownerID">
                 </div>
                 <div class="form-group">

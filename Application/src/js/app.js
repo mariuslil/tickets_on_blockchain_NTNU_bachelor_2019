@@ -1,12 +1,27 @@
-import { default as Web3 } from 'web3';
+App = {
+    web3Prvoider: null,
+    contracts: {},
+    account: '0x0',
 
-var web3;
+    init: function () {
+        return App.initWeb3();
+    },
 
-if (typeof web3 !== 'undefined') {
-    web3 = new Web3(web3.currentProvider);
-} else {
-    //set the prodiver you wish from Wbe3.providers
-    web3 = new Web3(new Web3.providers.HttpProvider("HttpProvider://localhost:7545"));
+    initWeb3: function () {
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }
+        return App.initContract();
+    },
+
+    initContract: function () {
+        $.getJSON("Services.json", function (services) {
+            App.contracts.services = TruffleContract(services);
+            App.contracts.services.setProvider(App.web3Prvoider);
+        });
+    }
+
 }
-
-//var abi??

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js"></script>
+    <script src="js/abi.js"></script>
 </head>
 
 <body>
@@ -27,21 +29,87 @@
             <div class="col-md-3 mb-1">
                 <h3>Create event organizer</h3>
                 <div class="form-group">
-                    <label for="eventOrganizerID"> Event organizer ID:</label></br>
-                    <input type="text" class="form-group" id="eventOrganizerID">
+                    <label for="CreateEventOrganizerID"> Event organizer ID:</label></br>
+                    <input type="text" class="form-group" id="CreateEventOrganizerID">
                 </div>
                 <div class="form-group">
-                    <label for="name"> Name:</label></br>
-                    <input type="text" class="form-group" id="name">
+                    <label for="createName"> Name:</label></br>
+                    <input type="text" class="form-group" id="createName">
                 </div>
                 <div class="form-group">
-                    <label for="addr"> Address:</label></br>
-                    <input type="text" class="form-group" id="addr">
+                    <label for="createPassword"> Password:</label></br>
+                    <input type="password" class="form-group" id="createPassword">
                 </div>
-                <button type="button" class="btn btn-primary btn-md">Create</button>
+                <button type="button" class="btn btn-primary btn-md" id="CreateEventOrganizer">Create</button>
+            </div>
+            <div class="col-md-3 mb-1">
+                <h3>Get ganizer</h3>
+                <div class="form-group">
+                    <label for="getEventOrganizerID"> Event organizer ID:</label></br>
+                    <input type="text" class="form-group" id="getEventOrganizerID">
+                </div>
+                <button type="button" class="btn btn-primary btn-md" id="getEventOrganizer">Get</button>
+                <div class="form-group">
+                    <label for="getName"> Name:</label></br>
+                    <input type="text" class="form-group" id="getName">
+                </div>
+                <div class="form-group">
+                    <label for="getAddr"> Address:</label></br>
+                    <input type="text" class="form-group" id="getAddr">
+                </div>
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }
+
+        var contract = new web3.eth.Contract(abi, address);
+
+        console.log(contract);
+
+        function CreateEventOrganizer(_name, _eventOrganizerId, _addr) {
+            return contract.methods.createEventOrganizer(_name, _eventOrganizerId, _addr).call();
+        }
+
+        $("#CreateEventOrganizer").click(function () {
+            web3.eth.personal.getAccounts().then(function (accounts) {
+
+                var _name = $("#createName").val();
+
+                var _password = $("#createPassword").val();
+
+                //web3.eth.personal.newAccount(_password).then(console.log);
+
+                var _eventOrganizerId = $("#CreateEventOrganizerID").val();
+
+                CreateEventOrganizer(_name, accounts[6], _eventOrganizerId).then(function (create) {
+
+                    console.log("Event Organizer " + JSON.stringify(create));
+                });
+            });
+        });
+
+        function getEventOrganizer(_eventOrganizerId) {
+            return contract.methods.getEventOrganizer(_eventOrganizerId).call()
+        }
+
+        $("#getEventOrganizer").click(function () {
+            var _eventOrganizerId = $("#getEventOrganizerID").val();
+            getEventOrganizer(_eventOrganizerId).then(function (result) {
+                console.log(result);
+                $("#getName").val(result[1]);
+                $("#getAddr").val(result[2]);
+            });
+        });
+
+    </script>
 </body>
 
 </html>

@@ -25,6 +25,7 @@
         <a href="user.html">User</a>
         <a href="EventOrganizer.html">Event organizer</a>
         <a href="ticket.html">Ticket</a>
+        <a href="log.html">Logs</a>
     </div>
 
     <div class="container">
@@ -120,8 +121,13 @@
         }
 
         function createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price) {
-            return Services.methods.createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price).call();
+            return Services.methods.createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price).sendTransaction({ from: '0x2a6efe82776B1DBB00C36174bc63D5ce80037efc' });
         }
+        web3.eth.personal.getAccounts().then(function (accounts) {
+            for (var i = 0; i < accounts.length; ++i) {
+                console.log(accounts[i]);
+            }
+        });
 
         function start(_gameId) {
             return Services.methods.gameStart(_gameId).call();
@@ -134,7 +140,7 @@
         function checkGames(_gameId) {
             return Services.methods.checkGame(_gameId).call();
         }
-
+        console.log(Services.methods.createGame(44, 27, "dfs", "ew", 5, 10).call(44, 27, "dfs", "ew", 5, 10));
         $("#creaeteGame").click(function () {
             var _gameId = $("#createGameID").val();
             checkGames(_gameId).then(function (error) {
@@ -144,12 +150,11 @@
                     var _awayTeam = $("#createAwayTeam").val();
                     var _tickets = $("#createTickets").val();
                     var _price = $("#createPrice").val();
-                    createGame(_gameId, _eventorganizerId, _homeTeam, _awayTeam, _tickets, _price)
-                        .then(function (result) {
-                            console.log(result);
-                            result;
+                    createGame(_gameId, _eventorganizerId, _homeTeam, _awayTeam, _tickets, _price).then(function (result) {
 
-                        });
+                        console.log(result);
+                        result();
+                    });
                 } else {
                     alert("This ID is already begin used");
                 }

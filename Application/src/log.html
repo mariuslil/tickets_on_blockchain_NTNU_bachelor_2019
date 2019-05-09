@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/app.css">
+    <title> homepage</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.36/dist/web3.min.js"></script>
+    <script src="js/abi.js"></script>
+</head>
+
+<body>
+
+    <div class="header">
+        <img src="img/InnitLogo.png" float="left">
+        <a href="index.html">Prototype</a>
+    </div>
+
+    <div class="menubar">
+        <a href="game.html">Game</a>
+        <a href="user.html">User</a>
+        <a href="EventOrganizer.html">Event organizer</a>
+        <a href="ticket.html">Ticket</a>
+        <a href="log.html">Logs</a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <h3>Logs</h3>
+                <div class="form-group">
+                    <label for="eventOrganizerID"> Game ID: </label></br>
+                    <input type="number" class="form-control" id="eventOrganizerID">
+                </div>
+                <button type="button" class="btn btn-primary btn-md" id="getLogs">Finished</button>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <textarea class="form-control" id="logs" row=100></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+            //web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }
+
+        //getPastEvents
+        var Services = new web3.eth.Contract(abi, address);
+
+        function checkEventOrganizers(_eventOrganizerId) {
+            return Services.methods.checkEventOrganizer(_eventOrganizerId).call();
+        }
+
+        $("#getLogs").click(function () {
+            var _eventOrganizerId = $("#eventOrganizerID").val();
+            console.log(_eventOrganizerId);
+            checkEventOrganizers(_eventOrganizerId).then(function (error) {
+                if (error == false) {
+                    Services.getPastEvents("allEvents", {
+                        fromBlock: 0,
+                        toBlock: 'latest',
+                        topics: 'Array'
+                    }).then((events) => {
+                        console.log(events);
+                        var events1 = JSON.stringify(events);
+                        $("#logs").val(events1);
+                    });
+                } else {
+                    alert("Evento Organizer dont exists")
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

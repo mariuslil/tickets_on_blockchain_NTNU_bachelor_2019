@@ -512,7 +512,7 @@ contract Services{
 
                 Games[_posG].tickets[i].state = States.bought;               //change the state to bought
 
-                Users[_posU].tickets[posT] = Games[_posG].tickets[i];         //copy ticket to Users[].tickets[]
+                Users[_posU].tickets[posT] = Games[_posG].tickets[i];         //cop ticket to Users[].tickets[]
 
                 emit BuyTicket(Users[_posU].user_id,
                 Users[_posU].tickets[posT].game_id,
@@ -531,11 +531,12 @@ contract Services{
     //@param uint _userId is the id of user
     //@param uint _ticketId is the id of ticket
     //@return uint and uint, the userIs and ticketId
-    function getUser(uint _userId) public view returns(uint, string memory, int, uint){
+    function getUser(uint _userId) public view returns(uint, string memory, address, int, uint){
         uint pos = findPosUser(_userId);
 
         return(Users[pos].user_id,
         Users[pos].name,
+        Users[pos].addr,
         Users[pos].mobile,
         Users[pos].ticketOwns);
     }
@@ -662,5 +663,4 @@ contract Services{
          return (false);                                                                 //return false
 
     }
-    
 }

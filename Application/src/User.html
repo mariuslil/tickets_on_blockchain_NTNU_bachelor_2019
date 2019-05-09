@@ -29,41 +29,41 @@
             <div class="col-md-3 mb-1">
                 <h3>Create user</h3>
                 <div class="form-group">
-                    <label for="ownerID"> User ID:</label></br>
-                    <input type="text" class="form-group" id="ownerID">
+                    <label for="createUserID"> User ID:</label></br>
+                    <input type="text" class="form-group" id="createUserID">
                 </div>
                 <div class="form-group">
-                    <label for="name"> Full name:</label></br>
-                    <input type="text" class="form-group" id="name">
+                    <label for="createName"> Full name:</label></br>
+                    <input type="text" class="form-group" id="createName">
                 </div>
                 <div class="form-group">
-                    <label for="addr"> Address:</label></br>
-                    <input type="text" class="form-group" id="addr">
+                    <label for="createMobile"> Mobile:</label></br>
+                    <input type="text" class="form-group" id="createMobile">
                 </div>
-                <div class="form-group">
-                    <label for="mobile"> Mobile:</label></br>
-                    <input type="text" class="form-group" id="mobile">
-                </div>
-                <button type="button" class="btn btn-primary btn-md">Create</button>
+                <button type="button" class="btn btn-primary btn-md" id="createUser">Create</button>
             </div>
             <div class="col-md-3 mb-1">
                 <h3>Getuser</h3>
                 <div class="form-group">
-                    <label for="ownerID"> User ID:</label></br>
-                    <input type="text" class="form-group" id="ownerID">
+                    <label for="getUserID"> User ID:</label></br>
+                    <input type="text" class="form-group" id="getUserID">
                 </div>
-                <button type="button" class="btn btn-primary btn-md">Create</button>
+                <button type="button" class="btn btn-primary btn-md" id="getUser">Get</button>
                 <div class="form-group">
-                    <label for="name"> Name:</label></br>
-                    <input type="text" class="form-group" id="name">
-                </div>
-                <div class="form-group">
-                    <label for="addr"> Address:</label></br>
-                    <input type="text" class="form-group" id="addr">
+                    <label for="getName"> Name:</label></br>
+                    <input type="text" class="form-group" id="getName">
                 </div>
                 <div class="form-group">
-                    <label for="mobile"> Mobile:</label></br>
-                    <input type="text" class="form-group" id="mobile">
+                    <label for="getAddr"> Address:</label></br>
+                    <input type="text" class="form-group" id="getAddr">
+                </div>
+                <div class="form-group">
+                    <label for="getMobile"> Mobile:</label></br>
+                    <input type="text" class="form-group" id="getMobile">
+                </div>
+                <div class="form-group">
+                    <label for="getTickets"> Tickets own:</label></br>
+                    <input type="text" class="form-group" id="getTickets">
                 </div>
             </div>
             <div class="col-md-3 mb-1">
@@ -88,6 +88,79 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider you want from Web3.providers
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+        }
+
+        var Services = new web3.eth.Contract(abi, address);
+
+        function createUser(_userId, _name, _addr, _mobile) {
+            return Services.methods.createUser(_userId, _name, _addr, _mobile).call();
+        }
+
+        function checkAddress(_addr) {
+            return Services.methods.checkAddr(_addr).call();
+        }
+
+        /*web3.eth.personal.getAccounts().then(function (accounts) {
+            for (var i = 0; i < accounts.length; ++i) {
+                var x = 0;
+                checkAddress(accounts[i]).then(function (test) {
+                    if (test == true) {
+                        console.log(test);
+                        console.log(accounts[x])
+                    } else {
+                        console.log(test);
+                    }
+                    x++;
+
+                });
+            }
+        });*/
+
+        $("#createUser").click(function () {
+            web3.eth.personal.getAccounts().then(function (accounts) {
+                for (var i = 0; i < accounts.length; ++i) {
+                    var x = 0;
+                    checkAddress(accounts[x]).then(function (test) {
+                        if (test == true) {
+                            createUser($("#createUserID").val(), $("#createName").val(), accounts[x], $("#createMobile").val())
+                                .then(function (error, result) {
+                                    if (!error) {
+                                        console.log(result);
+                                        result;
+                                    } else {
+                                        console.log(error);
+                                    }
+                                    x++;
+                                });
+                        } else {
+                            console.log("false");
+                        }
+                    });
+                }
+            });
+        });
+
+        function getUser(_userId) {
+            return Services.methods.getUser(_userId).call();
+        }
+
+        $("#getUser").click(function () {
+            getUser(("#getUserID").val()).then(function (result) {
+                $("#getName").val(result[1]);
+                $("#getAddr").val(result[2]);
+                $("#getMobile").val(result[3]);
+                $("#getTickets").val(result[4]);
+            })
+        })
+    </script>
 </body>
 
 </html>

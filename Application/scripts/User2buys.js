@@ -11,7 +11,7 @@ module.exports = function (callback) {
             billet = instance;
 
             var buys3 = billet.buyTickets(26, 17, 5, { from: account[3], to: account[0] });
-            console.log("buyTickets(26, 17, 10)");
+            console.log("buyTickets(26, 17, 5)");
             buys3.then(function (bought3) {
                 console.log("User 13, Tickets 17: ", bought3);
             }).catch(function (e) {

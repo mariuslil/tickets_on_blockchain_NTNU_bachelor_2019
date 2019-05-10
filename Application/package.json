@@ -1,7 +1,7 @@
 {
-  "name": "test",
+  "name": "tickets_on_bockchain",
   "version": "1.0.0",
-  "description": "",
+  "description": "this is a prototype of a ticket system based on blockchain",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -16,6 +16,6 @@
     "dev": "lite-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Andrine Celine Flatby, Marius Lillevik And Ole Bjørn Gran",
+  "author": "Andrine Celine Flatby, Ole Bjørn Gran and Marius Lillevik",
   "license": "ISC"
 }

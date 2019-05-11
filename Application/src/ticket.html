@@ -56,11 +56,15 @@
                     <label for="validateGameID"> Game ID: </label></br>
                     <input type="number" class="form-control" id="validateGameID">
                 </div>
+                <div class="form-group">
+                    <label for="validateEventOrganizerID"> Event Organizer ID: </label></br>
+                    <input type="number" class="form-control" id="validateEventOrganizerID">
+                </div>
                 <button type="button" class="btn btn-primary btn-md" id="validate">Finished</button>
             </div>
 
             <div class="col-md-3">
-                <h3>Invaildate ticket</h3>
+                <h3>Invalidate ticket</h3>
                 <div class="form-group">
                     <label for="invaildUserID"> User ID: </label></br>
                     <input type="number" class="form-control" id="validateUserID">
@@ -68,6 +72,10 @@
                 <div class="form-group">
                     <label for="invaildGameID"> Game ID: </label></br>
                     <input type="number" class="form-control" id="validateGameID">
+                </div>
+                <div class="form-group">
+                    <label for="invaildEventOrganizerID"> Event organizer ID: </label></br>
+                    <input type="number" class="form-control" id="invaildEventOrganizerID">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="invaild">Finished</button>
             </div>
@@ -97,12 +105,16 @@
             return Services.methods.checkUser(_userId).call();
         }
 
+        function checkEventOrganizer(_eventOrganizerId) {
+            return Services.methods.checkEventOrganizer(_eventOrganizerId).call();
+        }
+
         function validate(_userId, _gameId) {
             return Services.methods.vaildateTicket(_userId, _gameId).call();
         }
 
-        function invaild() {
-
+        function invaild(_userId, _gameId) {
+            return Services.methods.invalidTicket(_userId, _gameId).call();
         }
 
         $("#buy").click(function () {
@@ -128,41 +140,54 @@
 
         $("#validate").click(function () {
             var _gameId = $("#validateGameID").val();
-            checkGames(_gameId).then(function (errorGame) {
-                if (errorGame == false) {
-                    var _userId = $("#validateUserID").val();
-                    checkUsers(_userId).then(function (errorUser) {
-                        if (errorUser == false) {
-                            var _tickets = $("#buyTicekts").val();
-                            validate(_userId, _gameId).then(function (result) {
-                                console.log(result);
+            checkGames(_gameId).then(function (game) {
+                if (game == false) {
+                    var _eventOrganizerId = $("#invaildEventOrganizerID").val();
+                    checkEventOrganizer(_eventOrganizerId).then(function (eventOrganizer) {
+                        if (eventOrganizer == false) {
+                            var _userId = $("#invaildUserID").val();
+                            checkUsers(_userId).then(function (errorUser) {
+                                if (errorUser == false) {
+                                    validate(_userId, _gameId).then(function (result) {
+                                        console.log(result);
+                                    });
+                                } else {
+                                    alert("User dont exists");
+                                }
                             });
                         } else {
-                            alert("User dont exists");
+                            alert("Not valided event organizer id");
                         }
                     });
                 } else {
-                    alert("Not valided game id")
+                    alert("Not valided game id");
                 }
             });
         });
 
         $("#invalid").click(function () {
             var _gameId = $("#invaildUserID").val();
-            checkGames(_gameId).then(function (errorGame) {
-                if (errorGame == false) {
-                    var _userId = $("#invaildUserID").val();
-                    checkUsers(_userId).then(function (errorUser) {
-                        if (errorUser == false) {
-                            invaild(_userId, _gameId).then(function (result) {
-                                console.log(result);
+            checkGames(_gameId).then(function (game) {
+                if (game == false) {
+                    var _eventOrganizerId = $("#validateEventOrganizerID").val();
+                    checkEventOrganizer(_eventOrganizerId).then(function (eventOrganizer) {
+                        if (eventOrganizer == false) {
+                            var _userId = $("#validateUserID").val();
+                            checkUsers(_userId).then(function (errorUser) {
+                                if (errorUser == false) {
+                                    invaild(_userId, _gameId).then(function (result) {
+                                        console.log(result);
+                                    });
+                                } else {
+                                    alert("User dont exists");
+                                }
                             });
                         } else {
-                            alert("User dont exists");
+                            alert("Not valided event organizer id");
                         }
                     });
                 } else {
-                    alert("Not valided game id")
+                    alert("Not valided game id");
                 }
             });
 

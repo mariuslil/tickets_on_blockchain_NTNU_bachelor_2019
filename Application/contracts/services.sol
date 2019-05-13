@@ -1,9 +1,5 @@
 pragma solidity >=0.4.22 <0.6.0;
 
-/* TODO:
--change owner to User
-*/
-
 contract Services{
 
     struct ticket{
@@ -47,6 +43,8 @@ contract Services{
         int mobile;
         //number of ticket own
         uint ticketOwns;
+        //password to the user
+        string password;
         //which ticket the user owns
         mapping(uint => ticket) tickets;
     }
@@ -58,6 +56,8 @@ contract Services{
         string name;
         //the address of event organizer
         address addr;
+        //password to the event organizer
+        string password;
     }
 
     //enum which state the ticket is in
@@ -82,10 +82,10 @@ contract Services{
     event CreateTicket(uint _ticketPos, uint _userId,  uint _gameId, int _price, States state);
 
     //Create event for createUser
-    event CreateUser(uint _userId, string  _name, address _addr, int _mobile, uint _ticketOwns);
+    event CreateUser(uint _userId, string  _name, address _addr, int _mobile, uint _ticketOwns, string _password);
 
     //Create event for createEvent
-    event CreateEventOrganizer(uint _evnetOrganizerId, string _name, address _addr);
+    event CreateEventOrganizer(uint _evnetOrganizerId, string _name, address _addr, string _password);
 
     //Create event for buyTickets
     event BuyTickets(uint _userId, uint _gameId, uint _tickets);
@@ -103,14 +103,14 @@ contract Services{
     //@param string memory _name is the name of a event organizer
     //@param address _addr is teh ethereum address to event organizer
     //@return bool, true if was successfull created, false if failed
-    function createEventOrganizer(string memory _name, address _addr, uint _evnetOrganizerId) public returns(bool){
+    function createEventOrganizer(string memory _name, address _addr, uint _evnetOrganizerId, string memory _password) public returns(bool){
 
         //check if event organizer already exits
         if(checkEventOrganizer(_evnetOrganizerId) && checkAddr(_addr)){
-            eventOrganizer memory e = eventOrganizer(_evnetOrganizerId, _name, _addr);      //Create a temporary memory of struct eventOrganizer
+            eventOrganizer memory e = eventOrganizer(_evnetOrganizerId, _name, _addr, _password);      //Create a temporary memory of struct eventOrganizer
             EventOrganizers.push(e);
 
-            emit CreateEventOrganizer(_evnetOrganizerId, _name, _addr);  
+            emit CreateEventOrganizer(_evnetOrganizerId, _name, _addr, _password);  
 
             return (true);
 
@@ -202,13 +202,14 @@ contract Services{
 
     //getEventOrganizer function gets all the information about a event organizer
     //@param uint _evnetOrganizerId is the id of evnet organizer
-    //@return uint of the evnet Organizer Id, string of evnet Organizer name and address of evnet Organizer
-    function getEventOrganizer(uint _evnetOrganizerId)public view returns(uint, string memory, address){
+    //@return uint of the evnet Organizer Id, string of evnet Organizer name, address of evnet Organizer and password
+    function getEventOrganizer(uint _evnetOrganizerId)public view returns(uint, string memory, address, string memory){
         uint pos = findPosEventOrganizer(_evnetOrganizerId);
 
         return(EventOrganizers[pos].evnetOrganizer_id,
         EventOrganizers[pos].name,
-        EventOrganizers[pos].addr);
+        EventOrganizers[pos].addr,
+        EventOrganizers[pos].password);
     }
 
     //createUser function create a user in user[]
@@ -217,15 +218,15 @@ contract Services{
     //@param address _addr is the ethereum address in the network to user
     //@param int _mobile setting mobile number to user
     //@returns bool, return true if the function was successfull
-    function createUser(uint _userId, string memory _name, address _addr, int _mobile) public returns(bool){
+    function createUser(uint _userId, string memory _name, address _addr, int _mobile, string memory _password) public returns(bool){
 
         //call the function checkUser to check _userId and _addr
         if(checkUser(_userId) && checkAddr(_addr)){
 
-            user memory u = user(_userId, _name, _addr, _mobile, 0);      //Create a temporary memory of struct user
+            user memory u = user(_userId, _name, _addr, _mobile, 0, _password);      //Create a temporary memory of struct user
             Users.push(u);
 
-            emit CreateUser(_userId, _name, _addr, _mobile, 0);        
+            emit CreateUser(_userId, _name, _addr, _mobile, 0, _password);        
 
             return (true);
 
@@ -530,15 +531,16 @@ contract Services{
     //getUser function gets a ticket from user
     //@param uint _userId is the id of user
     //@param uint _ticketId is the id of ticket
-    //@return uint and uint, the userIs and ticketId
-    function getUser(uint _userId) public view returns(uint, string memory, address, int, uint){
+    //@return uint and uint, the userId, ticketId and passord
+    function getUser(uint _userId) public view returns(uint, string memory, address, int, uint, string memory){
         uint pos = findPosUser(_userId);
 
         return(Users[pos].user_id,
         Users[pos].name,
         Users[pos].addr,
         Users[pos].mobile,
-        Users[pos].ticketOwns);
+        Users[pos].ticketOwns,
+        Users[pos].password);
     }
 
     //getUser_ticket function gets a ticket for user

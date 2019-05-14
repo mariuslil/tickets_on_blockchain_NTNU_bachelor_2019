@@ -31,12 +31,12 @@
             <div class="col-md-3 mb-1">
                 <h3>Create event organizer</h3>
                 <div class="form-group">
-                    <label for="CreateEventOrganizerID"> Event organizer ID:</label></br>
-                    <input type="text" class="form-control"" id=" CreateEventOrganizerID">
+                    <label for="CreateEventOrganizerID"> Event organizer ID: </label></br>
+                    <input type="number" class="form-control" id="CreateEventOrganizerID">
                 </div>
                 <div class="form-group">
-                    <label for="createName"> Name:</label></br>
-                    <input type="text" class="form-control"" id=" createName">
+                    <label for="createName"> Name: </label></br>
+                    <input type="text" class="form-control" id="createName">
                 </div>
                 <div class="form-group">
                     <label for="createPassword"> Password:</label></br>
@@ -47,17 +47,17 @@
             <div class="col-md-3 mb-1">
                 <h3>Get event organizer</h3>
                 <div class="form-group">
-                    <label for="getEventOrganizerID"> Event organizer ID:</label></br>
-                    <input type="text" class="form-control"" id=" getEventOrganizerID">
+                    <label for="getEventOrganizerID"> Event organizer ID: </label></br>
+                    <input type="number" class="form-control" id="getEventOrganizerID">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="getEventOrganizer">Get</button>
                 <div class="form-group">
-                    <label for="getName"> Name:</label></br>
-                    <input type="text" class="form-control"" id=" getName">
+                    <label for="getName"> Name: </label></br>
+                    <input type="text" class="form-control" id="getName">
                 </div>
                 <div class="form-group">
-                    <label for="getAddr"> Address:</label></br>
-                    <input type="text" class="form-control"" id=" getAddr">
+                    <label for="getAddr">Ethereum address: </label></br>
+                    <input type="text" class="form-control" id="getAddr">
                 </div>
             </div>
         </div>
@@ -72,48 +72,88 @@
             web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
         }
 
-        var contract = new web3.eth.Contract(abi, address);
+        var Services = new web3.eth.Contract(abi, address);
 
-        console.log(contract);
-
-        function CreateEventOrganizer(_name, _eventOrganizerId, _addr) {
-            return contract.methods.createEventOrganizer(_name, _eventOrganizerId, _addr).call();
-        }
-
-        web3.eth.personal.getAccounts().then(function (accounts) {
-            for (var i = 0; i < accounts.length; ++i) {
-                console.log(accounts[i]);
-            }
+        web3.eth.getAccounts().then(function (account) {
+            web3.eth.defaultAccount = account[0];
         });
 
-        $("#CreateEventOrganizer").click(function () {
-            web3.eth.personal.getAccounts().then(function (accounts) {
+        function CreateEventOrganizer(_name, _eventOrganizerId, _addr) {
+            return Services.methods.createEventOrganizer(_name, _eventOrganizerId, _addr, password)
+                .send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
 
-                var _name = $("#createName").val();
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
 
-                var _password = $("#createPassword").val();
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
 
-                //web3.eth.personal.newAccount(_password).then(console.log);
-
-                var _eventOrganizerId = $("#CreateEventOrganizerID").val();
-
-                CreateEventOrganizer(_name, accounts[6], _eventOrganizerId).then(function (create) {
-
-                    console.log("Event Organizer " + JSON.stringify(create));
                 });
+        }
+        function checkAddress(_addr) {
+            return Services.methods.checkAddr(_addr).call();
+        }
+
+        function checkId(_eventOrganizerId) {
+            return Services.methods.checkEventOrganizer(_eventOrganizerId).call();
+        }
+
+        function getEventOrganizer(_eventOrganizerId) {
+            return Services.methods.getEventOrganizer(_eventOrganizerId).call()
+        }
+
+
+        $("#CreateEventOrganizer").click(function () {
+            var _eventOrganizerId = $("#CreateEventOrganizerID").val();
+            checkId(_eventOrganizerId).then(function (id) {
+                if (id == true) {
+                    var _password = $("#createPassword").val();
+                    web3.eth.personal.newAccount(_password).then(function (account) {
+                        checkAddress(account).then(function (address) {
+                            if (address == true) {
+                                web3.eth.personal.unlockAccount(account, _password).then(function (err) {
+                                    if (err == true) {
+                                        var _name = $("#createName").val();
+                                        web3.eth.getBalance(account).then(console.log);
+                                        console.log(_name, account, _eventOrganizerId);
+                                        CreateEventOrganizer(_name, account, _eventOrganizerId, account.toString(), _password).then(function (create) {
+
+                                            console.log("Event Organizer " + JSON.stringify(create));
+                                        });
+                                    } else {
+                                        alert("couldn't unlock account");
+                                    }
+                                });
+                            } else {
+                                alert("The ethereum address weren't made correct");
+                            }
+                        });
+
+                    });
+                } else {
+                    alert("The id is already begin used");
+                }
             });
         });
 
-        function getEventOrganizer(_eventOrganizerId) {
-            return contract.methods.getEventOrganizer(_eventOrganizerId).call()
-        }
-
         $("#getEventOrganizer").click(function () {
             var _eventOrganizerId = $("#getEventOrganizerID").val();
-            getEventOrganizer(_eventOrganizerId).then(function (result) {
-                console.log(result);
-                $("#getName").val(result[1]);
-                $("#getAddr").val(result[2]);
+            checkId(_eventOrganizerId).then(function (id) {
+                if (id == false) {
+                    getEventOrganizer(_eventOrganizerId).then(function (result) {
+                        console.log(result);
+                        $("#getName").val(result[1]);
+                        $("#getAddr").val(result[2]);
+                    });
+                } else {
+                    alert("Not vaild event organizer");
+                }
             });
         });
 

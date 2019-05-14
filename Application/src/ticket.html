@@ -57,7 +57,7 @@
                     <input type="number" class="form-control" id="validateGameID">
                 </div>
                 <div class="form-group">
-                    <label for="validateEventOrganizerID"> Event Organizer ID: </label></br>
+                    <label for="validateEventOrganizerID">Event Organizer ID: </label></br>
                     <input type="number" class="form-control" id="validateEventOrganizerID">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="validate">Finished</button>
@@ -67,17 +67,17 @@
                 <h3>Invalidate ticket</h3>
                 <div class="form-group">
                     <label for="invaildUserID"> User ID: </label></br>
-                    <input type="number" class="form-control" id="validateUserID">
+                    <input type="number" class="form-control" id="invaildUserID">
                 </div>
                 <div class="form-group">
                     <label for="invaildGameID"> Game ID: </label></br>
-                    <input type="number" class="form-control" id="validateGameID">
+                    <input type="number" class="form-control" id="invaildGameID">
                 </div>
                 <div class="form-group">
-                    <label for="invaildEventOrganizerID"> Event organizer ID: </label></br>
+                    <label for="invaildEventOrganizerID">Event Organizer ID: </label></br>
                     <input type="number" class="form-control" id="invaildEventOrganizerID">
                 </div>
-                <button type="button" class="btn btn-primary btn-md" id="invaild">Finished</button>
+                <button type="button" class="btn btn-primary btn-md" id="invalid">Finished</button>
             </div>
         </div>
     </div>
@@ -93,9 +93,9 @@
         }
         var Services = new web3.eth.Contract(abi, address);
 
-        function buy(_userId, _gameId, _tickets) {
-            return Services.methods.buyTickets(_userId, _gameId, _tickets).call();
-        }
+        web3.eth.getAccounts().then(function (account) {
+            web3.eth.defaultAccount = account[0];
+        });
 
         function checkGames(_gameId) {
             return Services.methods.checkGame(_gameId).call();
@@ -109,24 +109,83 @@
             return Services.methods.checkEventOrganizer(_eventOrganizerId).call();
         }
 
-        function validate(_userId, _gameId) {
-            return Services.methods.vaildateTicket(_userId, _gameId).call();
+        function getEventOrganizer(_eventOrganizerId) {
+            return Services.methods.getEventOrganizer(_eventOrganizerId).call()
         }
 
-        function invaild(_userId, _gameId) {
-            return Services.methods.invalidTicket(_userId, _gameId).call();
+        function getUser(_userId) {
+            return Services.methods.getUser(_userId).call();
+        }
+
+        function buy(_userId, _gameId, _tickets, _addr) {
+            return Services.methods.buyTickets(_userId, _gameId, _tickets)
+                .send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
+
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
+
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
+
+                });
+        }
+
+        function validate(_userId, _gameId, _addr) {
+            return Services.methods.vaildateTicket(_userId, _gameId)
+                .send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
+
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
+
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
+
+                });
+        }
+
+        function invaild(_userId, _gameId, _addr) {
+            return Services.methods.invalidTicket(_userId, _gameId)
+                .send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
+
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
+
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
+
+                });
         }
 
         $("#buy").click(function () {
             var _gameId = $("#buyGameID").val();
-            checkGames(_gameId).then(function (errorGame) {
-                if (errorGame == false) {
+            checkGames(_gameId).then(function (game) {
+                if (game == false) {
                     var _userId = $("#buyUserID").val();
-                    checkUsers(_userId).then(function (errorUser) {
-                        if (errorUser == false) {
-                            var _tickets = $("#buyTicekts").val();
-                            buy(_userId, _gameId, _tickets).then(function (result) {
-                                console.log(result);
+                    checkUsers(_userId).then(function (user) {
+                        if (user == false) {
+                            getUser(_userId).then(function (_addr) {
+                                var _tickets = $("#buyTicekts").val();
+                                buy(_userId, _gameId, _tickets, _addr[2].toString()).then(function (result) {
+                                    console.log(result);
+                                });
                             });
                         } else {
                             alert("User dont exists");
@@ -142,41 +201,48 @@
             var _gameId = $("#validateGameID").val();
             checkGames(_gameId).then(function (game) {
                 if (game == false) {
-                    var _eventOrganizerId = $("#invaildEventOrganizerID").val();
+                    var _eventOrganizerId = $("#validateEventOrganizerID").val();
                     checkEventOrganizer(_eventOrganizerId).then(function (eventOrganizer) {
                         if (eventOrganizer == false) {
-                            var _userId = $("#invaildUserID").val();
-                            checkUsers(_userId).then(function (errorUser) {
-                                if (errorUser == false) {
-                                    validate(_userId, _gameId).then(function (result) {
-                                        console.log(result);
+                            var _userId = $("#validateUserID").val();
+                            console.log(_userId);
+                            checkUsers(_userId).then(function (user) {
+                                if (user == false) {
+                                    getUser(_userId).then(function (_addr) {
+                                        validate(_userId, _gameId, _addr[2].toString()).then(function (result) {
+                                            console.log(result);
+                                        });
                                     });
                                 } else {
-                                    alert("User dont exists");
+                                    alert("User don't exists");
                                 }
                             });
                         } else {
-                            alert("Not valided event organizer id");
+                            alert("Event organizer don't exists");
                         }
                     });
                 } else {
-                    alert("Not valided game id");
+                    alert("Game don't exists");
                 }
             });
         });
 
         $("#invalid").click(function () {
-            var _gameId = $("#invaildUserID").val();
+            var _gameId = $("#invaildGameID").val();
+            console.log(_gameId);
             checkGames(_gameId).then(function (game) {
                 if (game == false) {
-                    var _eventOrganizerId = $("#validateEventOrganizerID").val();
+                    var _eventOrganizerId = $("#invaildEventOrganizerID").val();
+                    console.log(_eventOrganizerId);
                     checkEventOrganizer(_eventOrganizerId).then(function (eventOrganizer) {
                         if (eventOrganizer == false) {
-                            var _userId = $("#validateUserID").val();
-                            checkUsers(_userId).then(function (errorUser) {
-                                if (errorUser == false) {
-                                    invaild(_userId, _gameId).then(function (result) {
-                                        console.log(result);
+                            var _userId = $("#invaildUserID").val();
+                            checkUsers(_userId).then(function (user) {
+                                if (user == false) {
+                                    getUser(_userId).then(function (_addr) {
+                                        invaild(_userId, _gameId, _addr[2].toString()).then(function (result) {
+                                            console.log(result);
+                                        });
                                     });
                                 } else {
                                     alert("User dont exists");
@@ -187,10 +253,9 @@
                         }
                     });
                 } else {
-                    alert("Not valided game id");
+                    alert("Game don't exists");
                 }
             });
-
         });
     </script>
 </body>

@@ -96,27 +96,3 @@ h1 a{
     text-decoration: none;
     font-family: Arial;
 }
-
-.boxLeft{
-    overflow: hidden;
-    width: auto;
-    height:auto;
-    float: left;
-    margin: 0%;
-}
-
-.boxCenter{
-    overflow: hidden;
-    width: auto;
-    height:auto;
-    float: left;
-    margin: 0%;
-}
-
-.boxRight{
-    width: auto;
-    text-align: right;
-    height:auto;
-    float: left;
-    margin: 0%;
-}

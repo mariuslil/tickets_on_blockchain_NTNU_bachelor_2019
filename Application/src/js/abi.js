@@ -97,11 +97,16 @@ const abi = [
                 "indexed": false,
                 "name": "_ticketOwns",
                 "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "name": "_password",
+                "type": "string"
             }
         ],
         "name": "CreateUser",
         "type": "event",
-        "signature": "0xdb5c54f0d7063989e75d10af0cff59163916ebb154284cdbaf84a0dcf78cfdf4"
+        "signature": "0x4b0cfa91b70b04890ce3d872e5ffb77ad35a75302ad0d967f53cbdbb641800ee"
     },
     {
         "anonymous": false,
@@ -120,11 +125,16 @@ const abi = [
                 "indexed": false,
                 "name": "_addr",
                 "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "_password",
+                "type": "string"
             }
         ],
         "name": "CreateEventOrganizer",
         "type": "event",
-        "signature": "0xe9d1a18d12d4547c8ef1b44691b7b7df6f792756080f97535799d97d63e12e79"
+        "signature": "0x4f00c7b885d3a22336c66b1d625a1c3739bf600c8ef0cc9d1ef99ae50903d4f7"
     },
     {
         "anonymous": false,
@@ -257,6 +267,10 @@ const abi = [
             {
                 "name": "_evnetOrganizerId",
                 "type": "uint256"
+            },
+            {
+                "name": "_password",
+                "type": "string"
             }
         ],
         "name": "createEventOrganizer",
@@ -269,7 +283,7 @@ const abi = [
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0x237b1d3f"
+        "signature": "0x936abdc0"
     },
     {
         "constant": true,
@@ -367,6 +381,10 @@ const abi = [
             {
                 "name": "",
                 "type": "address"
+            },
+            {
+                "name": "",
+                "type": "string"
             }
         ],
         "payable": false,
@@ -392,6 +410,10 @@ const abi = [
             {
                 "name": "_mobile",
                 "type": "int256"
+            },
+            {
+                "name": "_password",
+                "type": "string"
             }
         ],
         "name": "createUser",
@@ -404,7 +426,7 @@ const abi = [
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0xd67fccc0"
+        "signature": "0x98aa4b01"
     },
     {
         "constant": true,
@@ -849,6 +871,10 @@ const abi = [
             {
                 "name": "",
                 "type": "uint256"
+            },
+            {
+                "name": "",
+                "type": "string"
             }
         ],
         "payable": false,
@@ -1010,4 +1036,4 @@ const abi = [
     }
 ];
 
-const address = '0x15e1a9e12766513e24Fe77965b9F62e2F9bf92bD';
+const address = '0xFf27b0625bC8864De47084793a959d90cF4D1619';

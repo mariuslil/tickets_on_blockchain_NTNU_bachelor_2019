@@ -59,14 +59,14 @@
                 <button type="button" class="btn btn-primary btn-md" id="creaeteGame">Create</button>
             </div>
             <div class="col-md-3">
-                <h3>Change status</h3>
+                <h3>Change state</h3>
                 <div class="form-group">
                     <label for="getChangeGameID"> Game ID: </label></br>
                     <input type="number" class="form-control" id="getChangeGameID">
                 </div>
                 <div class="form-group">
-                    <label for="ChangeGameState"> Game status: </label></br>
-                    <input type="text" class="form-control" id="ChangeGameState">
+                    <label for="ChangeGameState"> Game state: </label></br>
+                    <input type="text" class="form-control" id="ChangeGameState" placeholder="Ongoing or Ended">
                 </div>
                 <button type="button" class="btn btn-primary btn-md" id="changeGame">Change</button>
             </div>
@@ -95,7 +95,7 @@
                     <input type="number" class="form-control" id="getTickets">
                 </div>
                 <div class="form-group">
-                    <label for="getStatus"> Status: </label></br>
+                    <label for="getStatus"> State: </label></br>
                     <input type="text" class="form-control" id="getStatus">
                 </div>
             </div>
@@ -114,49 +114,112 @@
 
         var Services = new web3.eth.Contract(abi, address);
 
-
-
-        function getGame(gameId) {
-            return Services.methods.getGame(gameId).call();
-        }
-
-        function createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price) {
-            return Services.methods.createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price).sendTransaction({ from: '0x2a6efe82776B1DBB00C36174bc63D5ce80037efc' });
-        }
-        web3.eth.personal.getAccounts().then(function (accounts) {
-            for (var i = 0; i < accounts.length; ++i) {
-                console.log(accounts[i]);
-            }
+        web3.eth.getAccounts().then(function (account) {
+            web3.eth.defaultAccount = account[0];
         });
 
-        function start(_gameId) {
-            return Services.methods.gameStart(_gameId).call();
+
+        function createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price, _addr) {
+            return Services.methods.createGame(gameId, eventOrganizerID, homeTeam, awayTeam, tickets, price)
+                .send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
+
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
+
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
+
+                });
         }
 
-        function ended(_gameId) {
-            return Services.methods.gameEnded(_gameId).call();
+
+        function start(_gameId, _addr) {
+            return Services.methods.gameStart(_gameId).send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
+
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
+
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
+
+                });
+        }
+
+        function ended(_gameId, _addr) {
+            return Services.methods.gameEnded(_gameId).send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
+
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
+
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
+
+                });
         }
 
         function checkGames(_gameId) {
             return Services.methods.checkGame(_gameId).call();
         }
-        console.log(Services.methods.createGame(44, 27, "dfs", "ew", 5, 10).call(44, 27, "dfs", "ew", 5, 10));
+        function checkAddress(_addr) {
+            return Services.methods.checkAddr(_addr).call();
+        }
+
+        function checkId(_eventOrganizerId) {
+            return Services.methods.checkEventOrganizer(_eventOrganizerId).call();
+        }
+
+        function getEventOrganizer(_eventOrganizerId) {
+            return Services.methods.getEventOrganizer(_eventOrganizerId).call()
+        }
+
+        function getGame(gameId) {
+            return Services.methods.getGame(gameId).call();
+        }
+
         $("#creaeteGame").click(function () {
             var _gameId = $("#createGameID").val();
-            checkGames(_gameId).then(function (error) {
-                if (error == true) {
+            console.log(_gameId);
+            checkGames(_gameId).then(function (game) {
+                if (game == true) {
                     var _eventorganizerId = $("#createEventOrganizerID").val();
-                    var _homeTeam = $("#createHomeTeam").val();
-                    var _awayTeam = $("#createAwayTeam").val();
-                    var _tickets = $("#createTickets").val();
-                    var _price = $("#createPrice").val();
-                    createGame(_gameId, _eventorganizerId, _homeTeam, _awayTeam, _tickets, _price).then(function (result) {
+                    checkId(_eventorganizerId).then(function (id) {
+                        if (id == false) {
+                            getEventOrganizer(_eventorganizerId).then(function (_addr) {
+                                var _homeTeam = $("#createHomeTeam").val();
+                                var _awayTeam = $("#createAwayTeam").val();
+                                var _tickets = $("#createTickets").val();
+                                var _price = $("#createPrice").val();
+                                console.log(_gameId, _eventorganizerId, _homeTeam, _awayTeam, _tickets, _price, _addr[2].toString());
+                                createGame(_gameId, _eventorganizerId, _homeTeam, _awayTeam, _tickets, _price, _addr[2].toString()).then(function (result) {
 
-                        console.log(result);
-                        result();
+                                    console.log(result);
+
+                                });
+                            });
+                        } else {
+                            alert("Event Organizer don't exists");
+                        }
                     });
                 } else {
-                    alert("This ID is already begin used");
+                    alert("Game ID is already begin used");
                 }
             });
         });
@@ -164,25 +227,30 @@
         $("#changeGame").click(function () {
             var _gameId = $('#getChangeGameID').val();
             var _state = $("#ChangeGameState").val();
-            checkGames(_gameId).then(function (error) {
-                if (error == false) {
-                    switch (_state) {
-                        case "Ongoing":
-                            start(_gameId).then(function (result) {
-                                console.log(result);
-                            });
-                            break;
+            checkGames(_gameId).then(function (game) {
+                if (game == false) {
+                    getGame(_gameId).then(function (_eventOrganizerId) {
+                        getEventOrganizer(_eventOrganizerId[1]).then(function (_addr) {
+                            switch (_state) {
+                                case "Ongoing":
+                                    start(_gameId, _addr[2].toString()).then(function (result) {
+                                        console.log(result);
+                                    });
+                                    break;
 
-                        case "Ended":
-                            ended(_gameId).then(function (result) {
-                                console.log(result);
-                            });
-                            break;
+                                case "Ended":
+                                    ended(_gameId, _addr[2].toString()).then(function (result) {
+                                        console.log(result);
+                                    });
+                                    break;
 
-                        default:
-                            alert("Could not complete the change");
-                            break;
-                    }
+                                default:
+                                    alert("Could not complete the change, Options: Ongoing or Ended");
+                                    break;
+                            }
+                        });
+                    });
+
                 } else {
                     alert("Not valided game ID")
                 }
@@ -201,7 +269,7 @@
                         $("#getHomeTeamID").val(result[2]);
                         $("#getAwayTeamID").val(result[3]);
                         $("#getTickets").val(result[4]);
-                        switch (result[5].toString()) {                            //se på
+                        switch (result[5].toString()) {
                             case "0":
                                 $("#getStatus").val("Not startet");
                                 break;

@@ -42,6 +42,10 @@
                     <label for="createMobile"> Mobile:</label></br>
                     <input type="text" class="form-control" id="createMobile">
                 </div>
+                <div class="form-group">
+                    <label for="createPassword"> Password:</label></br>
+                    <input type="password" class="form-control" id="createPassword">
+                </div>
                 <button type="button" class="btn btn-primary btn-md" id="createUser">Create</button>
             </div>
             <div class="col-md-3 mb-1">
@@ -102,9 +106,9 @@
 
         var Services = new web3.eth.Contract(abi, address);
 
-        function createUser(_userId, _name, _addr, _mobile) {
-            return Services.methods.createUser(_userId, _name, _addr, _mobile).call();
-        }
+        web3.eth.getAccounts().then(function (account) {
+            web3.eth.defaultAccount = account[0];
+        });
 
         function checkAddress(_addr) {
             return Services.methods.checkAddr(_addr).call();
@@ -114,63 +118,69 @@
             return Services.methods.checkUser(_userId).call();
         }
 
-        /*web3.eth.personal.getAccounts().then(function (accounts) {
-            for (var i = 0; i < accounts.length; ++i) {
-                var x = 0;
-                checkAddress(accounts[i]).then(function (test) {
-                    if (test == true) {
-                        console.log(test);
-                        console.log(accounts[x])
-                    } else {
-                        console.log(test);
-                    }
-                    x++;
-
-                });
-            }
-        });*/
-
-        $("#createUser").click(function () {
-            var _userId = $("#createUserID").val();
-            web3.eth.personal.getAccounts().then(function (accounts) {
-                for (var i = 0; i < accounts.length; ++i) {
-                    var x = 0;
-                    checkAddress(accounts[x]).then(function (errorAccounts) {
-                        if (errorAccounts == true) {
-                            checkUsers(_userId).then(function (errorUser) {
-                                if (errorUser == true) {
-                                    createUser(_userId, $("#createName").val(), accounts[x], $("#createMobile").val())
-                                        .then(function (error, result) {
-                                            if (!error) {
-                                                console.log(result);
-                                                result;
-                                            } else {
-                                                console.log(error);
-                                            }
-                                            x++;
-                                        });
-                                } else {
-                                    alert("The id is already begin used");
-                                }
-                            });
-                        } else {
-                            alert("No valided address");
-                        }
-                    });
-                }
-            });
-        });
-
         function getUser(_userId) {
             return Services.methods.getUser(_userId).call();
         }
 
+        function getUserTickets(_userId, _ticketPos) {
+            return Services.methods.getUser_ticket(_userId, _ticketPos).call();
+        }
+
+        function createUser(_userId, _name, _addr, _mobile, _password) {
+            return Services.methods.createUser(_userId, _name, _addr, _mobile, _password)
+                .send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
+                .on('error', function (err) {
+                    console.log('error', err);
+                })
+                .on('transactionHash', function (transactionHash) {
+
+                })
+                .on('receipt', function (receipt) {
+                    var transactionHash = receipt.transactionHash;
+                    console.log('transactionHash', transactionHash);
+
+                })
+                .on('confirmation', function (confirmationNumber, receipt) {
+
+                });
+        }
+
+
+        $("#createUser").click(function () {
+            var _userId = $("#createUserID").val();
+            checkUsers(_userId).then(function (user) {
+                if (user == true) {
+                    var _password = $("#createPassword").val();
+                    web3.eth.personal.newAccount(_password).then(function (account) {
+                        checkAddress(account).then(function (address) {
+                            if (address == true) {
+                                web3.eth.personal.unlockAccount(account, _password).then(function (err) {
+                                    if (err == true) {
+                                        createUser(_userId, $("#createName").val(), account.toString(), $("#createMobile").val(), _password)
+                                            .then(function (result) {
+                                                console.log(result);
+                                            });
+                                    } else {
+                                        alert("Couldn't unlock the account");
+                                    }
+                                });
+                            } else {
+                                alert("No valided address");
+                            }
+                        });
+                    });
+                } else {
+                    alert("The is is already begin used")
+                }
+            });
+        });
+
         $("#getUser").click(function () {
-            var _userID = $("#getUserID").val();
-            console.log(_userID);
-            checkUsers(_userId).then(function (error) {
-                if (error == false) {
-                    getUser(_userID).then(function (result) {
+            var _userId = $("#getUserID").val();
+            console.log(_userId);
+            checkUsers(_userId).then(function (user) {
+                if (user == false) {
+                    getUser(_userId).then(function (result) {
                         $("#getName").val(result[1]);
                         $("#getAddr").val(result[2]);
                         $("#getMobile").val(result[3]);
@@ -182,15 +192,12 @@
             });
         });
 
-        function getUserTickets(_userId, _ticketPos) {
-            return Services.methods.getUser_ticket(_userId, _ticketPos).call();
-        }
 
         $("#getUserTickets").click(function () {
             var _userId = $("#getTicketUserID").val();
             var _ticketPos = $("#getTicketPos").val();
-            checkUsers(_userId).then(function (error) {
-                if (error == false) {
+            checkUsers(_userId).then(function (user) {
+                if (user == false) {
                     getUserTickets(_userId, _ticketPos).then(function (result) {
                         $("#getGameID").val(result[3]);
                         switch (result[4].toString()) {

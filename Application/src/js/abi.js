@@ -34,8 +34,7 @@ const abi = [
             }
         ],
         "name": "CreateGame",
-        "type": "event",
-        "signature": "0x998c39f1ae3006c00da0b143431c30ceae8e8a9ebf600d7d2518044aaea58526"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -67,8 +66,7 @@ const abi = [
             }
         ],
         "name": "CreateTicket",
-        "type": "event",
-        "signature": "0x97539382086e0add476d0d8bbbae481631e2f64a33fe93505fa983e7d596deea"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -105,8 +103,7 @@ const abi = [
             }
         ],
         "name": "CreateUser",
-        "type": "event",
-        "signature": "0x4b0cfa91b70b04890ce3d872e5ffb77ad35a75302ad0d967f53cbdbb641800ee"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -133,8 +130,7 @@ const abi = [
             }
         ],
         "name": "CreateEventOrganizer",
-        "type": "event",
-        "signature": "0x4f00c7b885d3a22336c66b1d625a1c3739bf600c8ef0cc9d1ef99ae50903d4f7"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -156,8 +152,7 @@ const abi = [
             }
         ],
         "name": "BuyTickets",
-        "type": "event",
-        "signature": "0x40b963f4c366c9198c53b5c895028a852b8d8e53a54f37afe27d373efefa14fe"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -189,8 +184,7 @@ const abi = [
             }
         ],
         "name": "BuyTicket",
-        "type": "event",
-        "signature": "0xe72b23892c8d4d4414c71ca14e9e74d3ca3c203d8da2f31e1d791ae32d463e16"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -217,8 +211,7 @@ const abi = [
             }
         ],
         "name": "TicketState",
-        "type": "event",
-        "signature": "0x24579924ee4db282267118b9187d4c6ac51707d33bd20040db020febaad041e3"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -250,8 +243,7 @@ const abi = [
             }
         ],
         "name": "GameSate",
-        "type": "event",
-        "signature": "0x4e68a854e9cc6a926a82fba13a4309738873fceb9a479a09bf09e54ab3f4a2eb"
+        "type": "event"
     },
     {
         "constant": false,
@@ -282,8 +274,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x936abdc0"
+        "type": "function"
     },
     {
         "constant": true,
@@ -302,8 +293,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x68eb9cc0"
+        "type": "function"
     },
     {
         "constant": true,
@@ -322,8 +312,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x0f55ce53"
+        "type": "function"
     },
     {
         "constant": true,
@@ -337,8 +326,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x849db2f5"
+        "type": "function"
     },
     {
         "constant": true,
@@ -357,8 +345,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x5490b011"
+        "type": "function"
     },
     {
         "constant": true,
@@ -389,8 +376,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x55c73485"
+        "type": "function"
     },
     {
         "constant": false,
@@ -425,8 +411,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x98aa4b01"
+        "type": "function"
     },
     {
         "constant": true,
@@ -445,8 +430,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x723331bb"
+        "type": "function"
     },
     {
         "constant": true,
@@ -460,8 +444,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0xdd338e35"
+        "type": "function"
     },
     {
         "constant": true,
@@ -480,8 +463,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0xf05884f9"
+        "type": "function"
     },
     {
         "constant": false,
@@ -520,8 +502,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x8e21b54a"
+        "type": "function"
     },
     {
         "constant": true,
@@ -540,8 +521,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x01e3eb27"
+        "type": "function"
     },
     {
         "constant": true,
@@ -555,8 +535,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x2fdc8160"
+        "type": "function"
     },
     {
         "constant": false,
@@ -583,8 +562,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x86c5325b"
+        "type": "function"
     },
     {
         "constant": true,
@@ -603,8 +581,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x7d30e1de"
+        "type": "function"
     },
     {
         "constant": true,
@@ -639,8 +616,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0xa426e4c8"
+        "type": "function"
     },
     {
         "constant": true,
@@ -679,8 +655,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0xa2f77bcc"
+        "type": "function"
     },
     {
         "constant": true,
@@ -727,8 +702,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x20fc1de9"
+        "type": "function"
     },
     {
         "constant": true,
@@ -747,8 +721,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x5565b962"
+        "type": "function"
     },
     {
         "constant": true,
@@ -767,8 +740,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x77beeaa2"
+        "type": "function"
     },
     {
         "constant": true,
@@ -787,8 +759,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0x9076a476"
+        "type": "function"
     },
     {
         "constant": false,
@@ -815,8 +786,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xc9a450df"
+        "type": "function"
     },
     {
         "constant": false,
@@ -839,8 +809,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xd6febde8"
+        "type": "function"
     },
     {
         "constant": true,
@@ -879,8 +848,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0xb0467deb"
+        "type": "function"
     },
     {
         "constant": true,
@@ -919,8 +887,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0xf3293005"
+        "type": "function"
     },
     {
         "constant": true,
@@ -943,8 +910,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "view",
-        "type": "function",
-        "signature": "0xde837923"
+        "type": "function"
     },
     {
         "constant": false,
@@ -963,8 +929,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xb8a5368a"
+        "type": "function"
     },
     {
         "constant": false,
@@ -983,8 +948,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x8b46a6da"
+        "type": "function"
     },
     {
         "constant": false,
@@ -1007,8 +971,7 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xf9ed0b4c"
+        "type": "function"
     },
     {
         "constant": false,
@@ -1031,9 +994,9 @@ const abi = [
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x25e1ea98"
+        "type": "function"
     }
 ];
 
-const address = '0xFf27b0625bC8864De47084793a959d90cF4D1619';
+//change the address to contract's address on blockchain
+const address = '0x028d21AB89fb35F682EF19012591fF95FdD1aaB6';

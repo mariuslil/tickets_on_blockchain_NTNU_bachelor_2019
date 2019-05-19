@@ -78,8 +78,8 @@
             web3.eth.defaultAccount = account[0];
         });
 
-        function CreateEventOrganizer(_name, _eventOrganizerId, _addr) {
-            return Services.methods.createEventOrganizer(_name, _eventOrganizerId, _addr, password)
+        function CreateEventOrganizer(_name, _eventOrganizerId, _addr, _password) {
+            return Services.methods.createEventOrganizer(_name, _eventOrganizerId, _addr, _password)
                 .send({ from: web3.eth.defaultAccount, to: _addr, gas: 200000000 })
                 .on('error', function (err) {
                     console.log('error', err);
